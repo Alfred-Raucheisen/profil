@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Persönlichkeits-Cockpit</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2744;
+    --blue: #2E75B6;
+    --gold: #C8A84B;
+    --cream: #FAF8F4;
+    --light: #EEF3FA;
+    --border: #D4DDF0;
+    --text: #1a2744;
+    --muted: #6b7a99;
+    --s-color: #2E75B6;
+    --t-color: #1E6B3C;
+    --a-color: #C0392B;
+    --b-color: #8E44AD;
+    --s-light: #EEF3FA;
+    --t-light: #EAF4EE;
+    --a-light: #FDECEA;
+    --b-light: #F5EEF8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--navy);
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(200,168,75,0.12);
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: -40px;
+    width: 150px; height: 150px;
+    border-radius: 50%;
+    background: rgba(46,117,182,0.15);
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    color: #fff;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.4rem;
+    position: relative; z-index: 1;
+  }
+  .header p {
+    color: rgba(255,255,255,0.65);
+    font-size: 0.9rem;
+    font-weight: 300;
+    position: relative; z-index: 1;
+  }
+  .gold-line {
+    width: 60px; height: 3px;
+    background: var(--gold);
+    margin: 1rem auto 0;
+    position: relative; z-index: 1;
+  }
+
+  /* CONTAINER */
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* SETUP CARD */
+  .setup-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border);
+    display: flex;
+    gap: 2rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .setup-card .field {
+    flex: 1; min-width: 180px;
+  }
+  .setup-card label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+  .setup-card input, .setup-card select {
+    width: 100%;
+    padding: 0.65rem 0.9rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text);
+    background: var(--cream);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .setup-card input:focus, .setup-card select:focus {
+    border-color: var(--blue);
+  }
+
+  /* INSTRUCTIONS */
+  .instructions {
+    background: var(--light);
+    border-left: 4px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+  .instructions strong { color: var(--text); }
+
+  /* PROGRESS */
+  .progress-bar-wrap {
+    background: var(--border);
+    border-radius: 99px;
+    height: 6px;
+    margin-bottom: 0.4rem;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--gold));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .progress-label {
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-align: right;
+    margin-bottom: 1.5rem;
+  }
+
+  /* QUESTION GROUPS */
+  .phase-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 2.5rem 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .phase-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .question-group {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .question-group.complete {
+    border-color: #b8d4b0;
+    background: #fafffe;
+  }
+  .question-group.error {
+    border-color: #f0a8a0;
+    background: #fff8f7;
+  }
+
+  .group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  .group-num {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .group-status {
+    font-size: 0.72rem;
+    color: var(--muted);
+    transition: color 0.2s;
+  }
+  .question-group.complete .group-status { color: #1E6B3C; font-weight: 600; }
+  .question-group.error .group-status { color: #C0392B; font-weight: 600; }
+
+  .column-labels {
+    display: grid;
+    grid-template-columns: 1fr 80px 80px;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding: 0 0.2rem;
+  }
+  .col-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: center;
+  }
+  .col-label:first-child { text-align: left; }
+
+  .word-row {
+    display: grid;
+    grid-template-columns: 1fr 80px 80px;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.35rem 0.2rem;
+    border-radius: 6px;
+    transition: background 0.15s;
+  }
+  .word-row:hover { background: var(--cream); }
+
+  .word-label {
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .stab-tag {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 1px 5px;
+    border-radius: 3px;
+    opacity: 0;
+  }
+
+  .radio-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Custom radio */
+  .radio-wrap {
+    position: relative;
+    width: 26px; height: 26px;
+    cursor: pointer;
+  }
+  .radio-wrap input[type=radio] {
+    position: absolute;
+    opacity: 0;
+    width: 100%; height: 100%;
+    cursor: pointer;
+    margin: 0;
+  }
+  .radio-custom {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    pointer-events: none;
+  }
+  .radio-custom::after {
+    content: '';
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: transparent;
+    transition: all 0.15s;
+  }
+
+  /* M = Most = blue */
+  .radio-wrap.m input:checked ~ .radio-custom {
+    border-color: var(--blue);
+    background: var(--blue);
+  }
+  .radio-wrap.m input:checked ~ .radio-custom::after {
+    background: #fff;
+  }
+  .radio-wrap.m:hover .radio-custom {
+    border-color: var(--blue);
+  }
+
+  /* W = Least = gold */
+  .radio-wrap.w input:checked ~ .radio-custom {
+    border-color: var(--gold);
+    background: var(--gold);
+  }
+  .radio-wrap.w input:checked ~ .radio-custom::after {
+    background: #fff;
+  }
+  .radio-wrap.w:hover .radio-custom {
+    border-color: var(--gold);
+  }
+
+  /* SUBMIT */
+  .submit-area {
+    margin-top: 3rem;
+    text-align: center;
+  }
+  .btn-submit {
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    padding: 1rem 3rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-submit:hover { background: var(--blue); transform: translateY(-1px); }
+  .btn-submit:active { transform: translateY(0); }
+  .error-msg {
+    color: #C0392B;
+    font-size: 0.85rem;
+    margin-top: 0.8rem;
+    display: none;
+  }
+
+  /* RESULTS */
+  #results { display: none; }
+
+  .result-header {
+    background: var(--navy);
+    border-radius: 12px;
+    padding: 2rem;
+    color: #fff;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .result-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+  }
+  .result-header p { color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-top: 0.3rem; }
+  .btn-reset {
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.25);
+    padding: 0.6rem 1.4rem;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-reset:hover { background: rgba(255,255,255,0.2); }
+
+  /* THREE PROFILES */
+  .profiles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.2rem;
+    margin-bottom: 2rem;
+  }
+  .profile-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .profile-card h3 {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+  .profile-hint {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.68rem;
+  }
+  .profile-desc {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    font-style: italic;
+  }
+  .profile-card--highlight {
+    border-color: var(--gold);
+    background: #fffdf5;
+  }
+  .profile-card--highlight h3 {
+    color: #9c7a0a;
+  }
+
+  .stab-bar-group { margin-bottom: 1rem; }
+  .stab-bar-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.3rem;
+    font-size: 0.82rem;
+  }
+  .stab-name { font-weight: 600; }
+  .stab-score { color: var(--muted); }
+  .stab-bar-track {
+    height: 8px;
+    background: var(--light);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .stab-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 1s cubic-bezier(0.4,0,0.2,1);
+    width: 0;
+  }
+  .s-bar { background: var(--s-color); }
+  .t-bar { background: var(--t-color); }
+  .a-bar { background: var(--a-color); }
+  .b-bar { background: var(--b-color); }
+
+  /* INTERPRETATION */
+  .interpretation-section {
+    margin-top: 2rem;
+  }
+  .interp-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--navy);
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .interp-card {
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+  }
+  .interp-head {
+    padding: 0.9rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    cursor: pointer;
+    user-select: none;
+  }
+  .interp-badge {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .interp-info { flex: 1; }
+  .interp-info h4 { font-size: 0.95rem; font-weight: 600; }
+  .interp-info span { font-size: 0.78rem; color: var(--muted); }
+  .interp-score-badge {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    color: #fff;
+  }
+  .interp-body {
+    padding: 0 1.2rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s;
+    background: #fff;
+  }
+  .interp-body.open {
+    max-height: 600px;
+    padding: 1rem 1.2rem 1.2rem;
+  }
+  .interp-block { margin-bottom: 1rem; }
+  .interp-block h5 {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .interp-block p {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: #444;
+  }
+
+  /* DOMINANT TYPE */
+  .dominant-banner {
+    background: linear-gradient(135deg, var(--navy) 0%, #2a4080 100%);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    color: #fff;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .dominant-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--gold);
+  }
+  .dominant-text h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+  }
+  .dominant-text p {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.5;
+  }
+
+  /* RAW DATA */
+  /* CONFIRMATION PAGE */
+  .conf-card {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 3rem 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .conf-icon {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: #e8f5e9;
+    color: #1E6B3C;
+    font-size: 1.8rem;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+  }
+  .conf-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--navy);
+    margin-bottom: 0.8rem;
+  }
+  .conf-card p { color: var(--muted); font-size: 0.95rem; line-height: 1.6; max-width: 400px; margin: 0 auto 0.5rem; }
+  .conf-sub { font-size: 0.82rem !important; margin-top: 1rem !important; }
+  .coach-section {
+    background: var(--navy);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+  }
+  .coach-section-label {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 0.6rem;
+  }
+  .url-row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+  .url-row input {
+    flex: 1; min-width: 0; padding: 0.6rem 0.8rem; border-radius: 6px;
+    border: none; background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8);
+    font-family: monospace; font-size: 0.72rem; outline: none;
+  }
+  .url-row button {
+    background: var(--gold); color: var(--navy); border: none;
+    padding: 0.6rem 1.2rem; border-radius: 6px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 700;
+    cursor: pointer; white-space: nowrap; transition: opacity 0.2s;
+  }
+  .url-row button:hover { opacity: 0.85; }
+
+  .raw-toggle {
+    font-size: 0.78rem;
+    color: var(--muted);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    margin-top: 1.5rem;
+    display: inline-block;
+  }
+  .raw-data {
+    display: none;
+    background: var(--light);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    font-family: monospace;
+    font-size: 0.78rem;
+    line-height: 1.8;
+    color: var(--muted);
+  }
+
+  @media (max-width: 600px) {
+    .column-labels, .word-row {
+      grid-template-columns: 1fr 60px 60px;
+      gap: 0.3rem;
+    }
+    .col-label { font-size: 0.62rem; }
+    .word-label { font-size: 0.85rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Persönlichkeits-Cockpit</h1>
+  <p>Identität, Verhalten und Wirkung</p>
+  <div class="gold-line"></div>
+</div>
+
+<div class="container">
+
+  <!-- FORM -->
+  <div id="form-section">
+
+    <div class="setup-card">
+      <div class="field">
+        <label>Name</label>
+        <input type="text" id="nameInput" placeholder="Ihr Name">
+      </div>
+      <div class="field">
+        <label>Datum</label>
+        <input type="date" id="dateInput">
+      </div>
+      <div class="field">
+        <label>Geschlecht</label>
+        <select id="genderInput">
+          <option value="">Bitte wählen</option>
+          <option value="m">Männlich</option>
+          <option value="w">Weiblich</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="instructions">
+      <strong>Anleitung:</strong> Wählen Sie in jeder Gruppe von vier Begriffen den Begriff,
+      der <strong style="color:var(--blue)">am meisten (M)</strong> auf Sie zutrifft, und den Begriff,
+      der <strong style="color:#9c7a0a">am wenigsten (W)</strong> auf Sie zutrifft.
+      Bearbeiten Sie die Felder zügig und hören Sie auf Ihre Intuition. Dauer: ca. 10 Minuten.
+    </div>
+
+    <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="progress-label" id="progressLabel">0 von 24 Gruppen ausgefüllt</div>
+
+    <div id="questions-container"></div>
+
+    <div class="submit-area">
+      <button class="btn-submit" onclick="submitTest()">Auswerten →</button>
+      <div class="error-msg" id="errorMsg">Bitte füllen Sie alle Gruppen vollständig aus.</div>
+    </div>
+
+  </div>
+
+  <!-- CONFIRMATION (coachee sees this after submitting) -->
+  <div id="confirmation" style="display:none">
+    <div class="conf-card">
+      <div class="conf-icon">✓</div>
+      <h2 id="conf-name">Vielen Dank!</h2>
+      <p>Ihre Antworten wurden erfasst. Ihr Coach wird die Auswertung im nächsten Meeting mit Ihnen besprechen.</p>
+      <p class="conf-sub">Sie können dieses Fenster schliessen.</p>
+    </div>
+
+    <!-- Coach-only section — in production you'd hide this or send via email -->
+    <div class="coach-section">
+      <div class="coach-section-label">🔒 Nur für Coach sichtbar</div>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.8rem">
+        Kopieren Sie diesen Link und öffnen Sie ihn auf Ihrem eigenen Gerät, um die vollständige Auswertung zu sehen.
+      </p>
+      <div class="url-row">
+        <input type="text" id="coachUrlBox" readonly>
+        <button id="copyBtn" onclick="copyCoachUrl()">Link kopieren</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results" style="display:none">
+    <div class="result-header">
+      <div>
+        <h2 id="resultName">Ergebnis</h2>
+        <p id="resultMeta"></p>
+      </div>
+      <button class="btn-reset" onclick="resetTest()">← Neu ausfüllen</button>
+    </div>
+
+    <div class="dominant-banner" id="dominantBanner"></div>
+
+    <div class="profiles-grid">
+      <div class="profile-card" id="profileM">
+        <h3>Projiziertes Bild <span class="profile-hint">(M-Werte)</span></h3>
+        <p class="profile-desc">Wie Sie sich nach aussen zeigen möchten — Ihr bewusstes, sozial geprägtes Selbstbild.</p>
+        <div id="barsM"></div>
+      </div>
+      <div class="profile-card" id="profileW">
+        <h3>Inneres Selbst <span class="profile-hint">(W-Werte)</span></h3>
+        <p class="profile-desc">Wie Sie sich innerlich erleben — Ihr authentischeres, tieferes Persönlichkeitsprofil.</p>
+        <div id="barsW"></div>
+      </div>
+      <div class="profile-card profile-card--highlight" id="profileD">
+        <h3>Im Lichte der Umwelt <span class="profile-hint">(M−W)</span></h3>
+        <p class="profile-desc">Die Differenz zwischen Aussen- und Innenbild — zeigt Rollenanpassung und potenzielle innere Spannung. <strong>Basis der Coaching-Interpretation.</strong></p>
+        <div id="barsD"></div>
+      </div>
+    </div>
+
+    <div class="interpretation-section">
+      <div class="interp-title">Interpretation Ihrer Werte</div>
+      <div id="interpCards"></div>
+    </div>
+
+    <span class="raw-toggle" onclick="toggleRaw()">Rohdaten anzeigen</span>
+    <div class="raw-data" id="rawData"></div>
+  </div>
+
+</div>
+
+<script>
+// ── DATA ────────────────────────────────────────────────────────────────────
+
+// 32 rows × 3 words each, grouped into 24 groups of 4 rows
+// Each row: [word_col0, word_col1, word_col2, stab_col0, stab_col1, stab_col2]
+// IMPORTANT: Each column set has its OWN STAB assignment per row (they differ!)
+const WORDS = [
+  ['begeisterungsfähig','methodisch','selbstsicher','B','T','A'],
+  ['respektvoll','bereitwillig','zuverlässig','S','S','T'],
+  ['entschlossen','fröhlich','nachdenklich','A','B','S'],
+  ['aufrichtig','ungebunden','kollegial','T','A','B'],
+  ['beherzt','gesellig','harmonisch','A','B','T'],
+  ['anregend','rücksichtsvoll','diplomatisch','B','S','S'],
+  ['sympatisch','treuherzig','erfinderisch','T','T','A'],
+  ['kontrolliert','reaktionsschnell','lebensfroh','S','A','B'],
+  ['nachsichtig','direkt','energisch','T','A','A'],
+  ['streitbar','bewahrend','anziehend','A','T','B'],
+  ['attraktiv','überzeugend','genau','B','B','S'],
+  ['diszipliniert','duldsam','gelassen','S','S','T'],
+  ['vertrauend','ordentlich','empfindsam','B','S','S'],
+  ['beständig','treu','optimistisch','T','T','B'],
+  ['zupackend','grosszügig','tatkräftig','A','B','A'],
+  ['ernsthaft','wagemutig','wohlwollend','S','A','T'],
+  ['ausdauernd','unabhängig','phantasievoll','T','A','B'],
+  ['zugewandt','perfektionistisch','geduldig','B','S','T'],
+  ['risikofreudig','einsichtig','konzentriert','A','T','S'],
+  ['sorgfältig','bewegend','kraftvoll','S','B','A'],
+  ['nachgiebig','gewissenhaft','genügsam','S','S','T'],
+  ['gewinnend','gütig','unnachgiebig','B','T','A'],
+  ['ruhig','strebsam','fügsam','T','A','S'],
+  ['zielsicher','freundschaftlich','adrett','A','B','B'],
+  ['forsch','bedacht','bescheiden','A','T','S'],
+  ['präzise','gesprächig','wirkungsvoll','S','B','A'],
+  ['massvoll','sorgsam','liebenswert','T','S','B'],
+  ['reizend','unternehmenslustig','verlässlich','B','A','T'],
+  ['kontaktfreudig','verhalten','kultiviert','B','S','B'],
+  ['arbeitsam','bahnbrechend','wetteifernd','A','A','A'],
+  ['willig','zufrieden','zugänglich','T','T','S'],
+  ['besonnen','beliebt','konventionell','S','B','T'],
+];
+
+// Groups of 4 consecutive rows = one question set
+// 8 groups × 3 columns = 24 question groups total
+const GROUPS = [];
+for (let col = 0; col < 3; col++) {
+  for (let g = 0; g < 8; g++) {
+    const rows = WORDS.slice(g*4, g*4+4);
+    GROUPS.push({ col, g, rows, idx: col*8+g });
+  }
+}
+// Reorder: col0 g0-7, col1 g0-7, col2 g0-7 → interleave by column group
+// Actually present them column by column as in original
+// Groups 0-7 = col A words, 8-15 = col B words, 16-23 = col C words
+
+// Normalization tables
+const LOOKUP_M = {
+  '-16':[0,0,0,0,100,100,100,100,0,0,1,0],
+  '-15':[0,0,0,0,100,100,100,100,1,0,2,0],
+  '-14':[0,0,0,0,100,100,100,100,2,0,5,0],
+  '-13':[0,0,0,0,100,100,100,100,3,1,8,1],
+  '-12':[0,0,0,0,100,100,100,100,4,2,9,2],
+  '-11':[0,0,0,0,100,100,100,100,5,3,10,3],
+  '-10':[0,0,0,0,100,100,100,100,7,4,13,5],
+  '-9':[0,0,0,0,100,100,100,100,8,5,16,8],
+  '-8':[0,0,0,0,100,100,100,100,13,8,20,10],
+  '-7':[0,0,0,0,100,100,100,100,16,10,25,13],
+  '-6':[0,0,0,0,100,100,100,100,18,16,30,18],
+  '-5':[0,0,0,0,100,100,100,100,20,18,35,20],
+  '-4':[0,0,0,0,100,100,100,100,25,25,40,30],
+  '-3':[0,0,0,0,100,100,100,100,35,30,42,35],
+  '-2':[0,0,0,0,100,100,100,100,40,35,45,45],
+  '-1':[0,0,0,0,100,100,100,100,45,40,55,55],
+  '0':[3,2,5,2,97,99,99,99,50,45,60,60],
+  '1':[8,7,10,10,95,97,93,97,55,55,65,70],
+  '2':[13,10,18,20,92,90,90,92,65,60,67,75],
+  '3':[18,20,30,35,86,84,84,84,70,65,70,80],
+  '4':[30,30,45,50,82,75,80,75,75,70,75,84],
+  '5':[35,40,55,60,70,55,70,60,80,80,80,87],
+  '6':[55,55,60,70,55,45,60,45,84,82,81,90],
+  '7':[60,65,65,80,45,35,50,35,85,86,82,92],
+  '8':[70,75,70,86,35,25,45,25,86,92,83,93],
+  '9':[80,86,80,90,25,16,35,16,92,95,84,96],
+  '10':[84,92,82,94,18,10,25,10,95,98,86,97],
+  '11':[92,93,84,95,14,8,20,7,98,98,88,98],
+  '12':[93,98,86,98,7,7,16,3,99,99,90,99],
+  '13':[97,99,90,99,5,4,14,1,100,99,92,100],
+  '14':[99,100,94,100,1,2,8,0,100,100,93,100],
+  '15':[100,100,98,100,0,1,5,0,100,100,95,100],
+  '16':[100,100,99,100,0,0,3,0,100,100,97,100],
+  '17':[100,100,100,100,0,0,2,0,100,100,98,100],
+  '18':[100,100,100,100,0,0,1,0,100,100,99,100],
+};
+const LOOKUP_W = {
+  '-16':[0,0,0,0,100,100,100,100,0,0,0,0],
+  '-15':[0,0,0,0,100,100,100,100,0,0,0,0],
+  '-14':[0,0,0,0,100,100,100,100,0,1,0,0],
+  '-13':[0,0,0,0,100,100,100,100,1,2,2,0],
+  '-12':[0,0,0,0,100,100,100,100,3,3,5,0],
+  '-11':[0,0,0,0,100,100,100,100,5,4,7,0],
+  '-10':[0,0,0,0,100,100,100,100,7,5,18,5],
+  '-9':[0,0,0,0,100,100,100,100,8,7,25,6],
+  '-8':[0,0,0,0,100,100,100,100,10,8,35,8],
+  '-7':[0,0,0,0,100,100,100,100,13,10,40,10],
+  '-6':[0,0,0,0,100,100,100,100,16,13,45,16],
+  '-5':[0,0,0,0,100,100,100,100,18,16,55,18],
+  '-4':[0,0,0,0,100,100,100,100,20,18,57,20],
+  '-3':[0,0,0,0,100,100,100,100,25,25,60,22],
+  '-2':[0,0,0,0,100,100,100,100,30,30,65,25],
+  '-1':[0,0,0,0,100,100,100,100,35,35,70,35],
+  '0':[2,2,7,5,99,100,99,100,45,40,75,45],
+  '1':[5,7,13,10,98,99,93,99,50,45,76,55],
+  '2':[10,8,25,20,92,92,90,92,55,60,78,65],
+  '3':[16,13,45,35,84,86,87,80,60,70,80,75],
+  '4':[25,18,55,45,70,75,82,65,65,82,82,82],
+  '5':[35,40,65,55,60,60,80,45,75,90,83,86],
+  '6':[45,60,75,75,45,45,75,35,84,92,84,90],
+  '7':[55,70,82,82,35,35,65,25,85,93,85,92],
+  '8':[65,80,84,86,30,16,55,18,86,95,86,93],
+  '9':[75,90,86,93,18,8,45,10,90,97,88,97],
+  '10':[84,93,90,95,16,7,40,6,95,98,90,99],
+  '11':[92,98,91,98,13,6,25,3,98,98,92,100],
+  '12':[95,99,93,99,5,5,18,0,99,99,93,100],
+  '13':[99,100,95,100,2,4,13,0,100,99,98,100],
+  '14':[100,100,98,100,0,3,5,0,100,100,98,100],
+  '15':[100,100,99,100,0,2,0,0,100,100,98,100],
+  '16':[100,100,100,100,0,0,0,0,100,100,99,100],
+  '17':[100,100,100,100,0,0,0,0,100,100,99,100],
+  '18':[100,100,100,100,0,0,0,0,100,100,99,100],
+};
+
+// col index: S=0, T=1, A=2, B=3
+const STAB_IDX = {S:0, T:1, A:2, B:3};
+const STAB_NAMES = {
+  S: 'Sorgfalt',
+  T: 'Geduld',
+  A: 'Tatkraft',
+  B: 'Begeisterung'
+};
+const STAB_COLORS = {S:'var(--s-color)', T:'var(--t-color)', A:'var(--a-color)', B:'var(--b-color)'};
+const STAB_LIGHTS = {S:'var(--s-light)', T:'var(--t-light)', A:'var(--a-light)', B:'var(--b-light)'};
+
+const INTERPRETATIONS = {
+  S: {
+    high: {
+      title: 'Ausgeprägte Sorgfalt (65–75+)',
+      text: 'Analytisches Denken, Planen und Gestalten. Hohe Detailtreue, bewusster Umgang mit Risiken. Kooperativ, empfindsam und diplomatisch — mitunter konfliktscheu. Entscheidungen werden sorgfältig abgewogen, gelegentlich zögernd. Brauchen Wertschätzung und Sicherheit, um sich weiterzuentwickeln. Delegieren fällt manchmal schwer.'
+    },
+    low: {
+      title: 'Geringe Sorgfalt (35–25 und weniger)',
+      text: 'Offenheit und Spontaneität. Unabhängiges Handeln, Skepsis gegenüber Regeln und formalisierten Prozessen. Auch unter Druck leistungsstark. Neigung, Details zu vernachlässigen. Direkt, impulsiv in Entscheidungen, risikofreudig und geradlinig.'
+    }
+  },
+  T: {
+    high: {
+      title: 'Ausgeprägte Geduld (65–75+)',
+      text: 'Beständigkeit, Loyalität und Verlässlichkeit prägen das Verhalten. Ruhig, stabil, hervorragende Zuhörerin/hervorragender Zuhörer. Wertkonservative Haltung, ausgeprägtes Zugehörigkeitsgefühl. Veränderungen werden eher als Herausforderung erlebt. Setzt und respektiert klare Grenzen und Prinzipien. Zu viele Verpflichtungen können zur Überlastung führen.'
+    },
+    low: {
+      title: 'Geringe Geduld (35–25 und weniger)',
+      text: 'Schnelles Reagieren auf Veränderungen, aktives Interesse an neuen Aufgaben. Hohes persönliches Engagement, jedoch mitunter mangelnde Systematik. Ungeduld und Schwierigkeit, sich zu entspannen. Geringe Aufmerksamkeit beim Zuhören in längeren Prozessen.'
+    }
+  },
+  A: {
+    high: {
+      title: 'Ausgeprägte Tatkraft (65–75+)',
+      text: 'Starke Ziel- und Ergebnisorientierung. Hohe Verantwortungsbereitschaft und Entscheidungsstärke. Sachbezogene, direkte Kommunikation. Neugierig und herausforderungsbereit. Ziel ist wichtiger als Prozess. Benötigen Gestaltungsfreiheit. Tendenz, andere stark zu fordern — auch sich selbst.'
+    },
+    low: {
+      title: 'Geringe Tatkraft (35–25 und weniger)',
+      text: 'Konsensorientierter Stil. Beratende und vermittelnde Funktion. Fähigkeit, positive Atmosphäre in Gruppen herzustellen. Mitunter zu nachgiebig. Vermindertes Durchsetzungsvermögen. Tendenz, Konflikte zu lange schwelen zu lassen, bevor eingegriffen wird.'
+    }
+  },
+  B: {
+    high: {
+      title: 'Ausgeprägte Begeisterung (65–75+)',
+      text: 'Aussenorientierung und ausgeprägte Kontaktbereitschaft. Positive Grundhaltung, optimistisches Auftreten. Starkes Überzeugungsvermögen und Begeisterungsfähigkeit. Traut sich viel zu — Gefahr der Überforderung. Komplexität von Problemen wird gelegentlich unterschätzt. Konfrontationen eher vermeidend.'
+    },
+    low: {
+      title: 'Geringe Begeisterung (35–25 und weniger)',
+      text: 'Sachbezogene, analytische Orientierung. Emotionale Kontrolle und Fokus auf Problemlösung. Zurückhaltend, reserviert, kühl wirkend. Aufgaben werden mit grosser Sachlichkeit bewältigt. Interpersoneller Kontakt wird bewusst dosiert.'
+    }
+  }
+};
+
+// ── RENDER QUESTIONS ────────────────────────────────────────────────────────
+
+function renderQuestions() {
+  const container = document.getElementById('questions-container');
+
+  GROUPS.forEach((grp, gi) => {
+
+    const div = document.createElement('div');
+    div.className = 'question-group';
+    div.id = `grp-${gi}`;
+
+    div.innerHTML = `
+      <div class="group-header">
+        <span class="group-num">Gruppe ${gi + 1} von 24</span>
+        <span class="group-status" id="status-${gi}">Noch nicht ausgefüllt</span>
+      </div>
+      <div class="column-labels">
+        <div class="col-label">Begriff</div>
+        <div class="col-label" style="color:var(--blue)">M<br><span style="font-weight:400;text-transform:none;letter-spacing:0">Meisten</span></div>
+        <div class="col-label" style="color:#9c7a0a">W<br><span style="font-weight:400;text-transform:none;letter-spacing:0">Wenigsten</span></div>
+      </div>
+    `;
+
+    grp.rows.forEach((row, ri) => {
+      const wordRow = document.createElement('div');
+      wordRow.className = 'word-row';
+      const wordId = `g${gi}r${ri}`;
+      wordRow.innerHTML = `
+        <div class="word-label">${row[grp.col]}</div>
+        <div class="radio-cell">
+          <label class="radio-wrap m">
+            <input type="radio" name="M-${gi}" value="${ri}" onchange="onRadioChange(${gi})">
+            <div class="radio-custom"></div>
+          </label>
+        </div>
+        <div class="radio-cell">
+          <label class="radio-wrap w">
+            <input type="radio" name="W-${gi}" value="${ri}" onchange="onRadioChange(${gi})">
+            <div class="radio-custom"></div>
+          </label>
+        </div>
+      `;
+      div.appendChild(wordRow);
+    });
+
+    container.appendChild(div);
+  });
+
+  // Set today's date
+  document.getElementById('dateInput').valueAsDate = new Date();
+}
+
+let completedGroups = 0;
+
+function onRadioChange(gi) {
+  const mVal = document.querySelector(`input[name="M-${gi}"]:checked`)?.value;
+  const wVal = document.querySelector(`input[name="W-${gi}"]:checked`)?.value;
+  const grp = document.getElementById(`grp-${gi}`);
+  const status = document.getElementById(`status-${gi}`);
+
+  // Prevent same selection for M and W
+  if (mVal !== undefined && wVal !== undefined && mVal === wVal) {
+    // Clear W if same as M
+    document.querySelectorAll(`input[name="W-${gi}"]`).forEach(r => r.checked = false);
+    status.textContent = 'M und W müssen verschieden sein';
+    grp.classList.remove('complete');
+    grp.classList.add('error');
+    updateProgress();
+    return;
+  }
+
+  const complete = mVal !== undefined && wVal !== undefined && mVal !== wVal;
+  grp.classList.toggle('complete', complete);
+  grp.classList.toggle('error', false);
+  status.textContent = complete ? '✓ Ausgefüllt' : 'Bitte M und W wählen';
+  updateProgress();
+}
+
+function updateProgress() {
+  let done = 0;
+  for (let gi = 0; gi < 24; gi++) {
+    const mVal = document.querySelector(`input[name="M-${gi}"]:checked`)?.value;
+    const wVal = document.querySelector(`input[name="W-${gi}"]:checked`)?.value;
+    if (mVal !== undefined && wVal !== undefined && mVal !== wVal) done++;
+  }
+  const pct = (done / 24) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `${done} von 24 Gruppen ausgefüllt`;
+}
+
+// ── SCORING ─────────────────────────────────────────────────────────────────
+
+function lookup(table, val, stabIdx) {
+  const key = String(Math.max(-16, Math.min(18, Math.round(val))));
+  if (table[key] !== undefined) return table[key][stabIdx];
+  // Clamp
+  if (val < -16) return table['-16'][stabIdx];
+  return table['18'][stabIdx];
+}
+
+function computeScores() {
+  // Count M and W selections per STAB dimension across all 24 groups
+  const mCount = {S:0, T:0, A:0, B:0};
+  const wCount = {S:0, T:0, A:0, B:0};
+
+  for (let gi = 0; gi < 24; gi++) {
+    const mVal = parseInt(document.querySelector(`input[name="M-${gi}"]:checked`)?.value);
+    const wVal = parseInt(document.querySelector(`input[name="W-${gi}"]:checked`)?.value);
+    const grp = GROUPS[gi];
+
+    if (!isNaN(mVal)) {
+      const stab = grp.rows[mVal][3 + grp.col]; // col-specific STAB assignment
+      mCount[stab]++;
+    }
+    if (!isNaN(wVal)) {
+      const stab = grp.rows[wVal][3 + grp.col]; // col-specific STAB assignment
+      wCount[stab]++;
+    }
+  }
+
+  const diff = {
+    S: mCount.S - wCount.S,
+    T: mCount.T - wCount.T,
+    A: mCount.A - wCount.A,
+    B: mCount.B - wCount.B
+  };
+
+  const gender = document.getElementById('genderInput').value;
+  const table = gender === 'w' ? LOOKUP_W : LOOKUP_M;
+
+  // M profile (cols 0-3), W profile (cols 4-7), Diff profile (cols 8-11)
+  const profM = {
+    S: lookup(table, mCount.S, 0),
+    T: lookup(table, mCount.T, 1),
+    A: lookup(table, mCount.A, 2),
+    B: lookup(table, mCount.B, 3),
+  };
+  const profW = {
+    S: lookup(table, wCount.S, 4),
+    T: lookup(table, wCount.T, 5),
+    A: lookup(table, wCount.A, 6),
+    B: lookup(table, wCount.B, 7),
+  };
+  const profD = {
+    S: lookup(table, diff.S, 8),
+    T: lookup(table, diff.T, 9),
+    A: lookup(table, diff.A, 10),
+    B: lookup(table, diff.B, 11),
+  };
+
+  return { mCount, wCount, diff, profM, profW, profD };
+}
+
+// ── URL MODE DETECTION ───────────────────────────────────────────────────────
+
+const IS_COACH = new URLSearchParams(window.location.search).has('coach');
+
+// If ?coach=DATA is in URL, go straight to results (coach view)
+function checkCoachUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const data = params.get('coach');
+  if (!data || data === 'true') return; // no data payload
+  try {
+    const decoded = JSON.parse(atob(data));
+    document.getElementById('form-section').style.display = 'none';
+    renderCoachResults(decoded);
+  } catch(e) {
+    // invalid data, show form normally
+  }
+}
+
+// ── SUBMIT ───────────────────────────────────────────────────────────────────
+
+function submitTest() {
+  let allDone = true;
+  for (let gi = 0; gi < 24; gi++) {
+    const mVal = document.querySelector(`input[name="M-${gi}"]:checked`)?.value;
+    const wVal = document.querySelector(`input[name="W-${gi}"]:checked`)?.value;
+    if (mVal === undefined || wVal === undefined || mVal === wVal) {
+      allDone = false;
+      document.getElementById(`grp-${gi}`).classList.add('error');
+    }
+  }
+  if (!allDone) {
+    document.getElementById('errorMsg').style.display = 'block';
+    document.querySelector('.question-group.error')?.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  const scores = computeScores();
+  const name   = document.getElementById('nameInput').value || '';
+  const date   = document.getElementById('dateInput').value || '';
+  const gender = document.getElementById('genderInput').value || 'm';
+
+  // Build coach URL with all data encoded
+  const payload = btoa(JSON.stringify({ scores, name, date, gender }));
+  const coachUrl = `${location.origin}${location.pathname}?coach=${payload}`;
+
+  showCoacheeConfirmation(name, coachUrl);
+}
+
+// ── COACHEE CONFIRMATION PAGE ─────────────────────────────────────────────────
+
+function showCoacheeConfirmation(name, coachUrl) {
+  document.getElementById('form-section').style.display = 'none';
+  document.getElementById('results').style.display = 'none';
+
+  const conf = document.getElementById('confirmation');
+  conf.style.display = 'block';
+
+  document.getElementById('conf-name').textContent = name ? `Danke, ${name}!` : 'Vielen Dank!';
+
+  // Copy-to-clipboard for coach
+  document.getElementById('coachUrlBox').value = coachUrl;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function copyCoachUrl() {
+  const box = document.getElementById('coachUrlBox');
+  box.select();
+  document.execCommand('copy');
+  const btn = document.getElementById('copyBtn');
+  btn.textContent = '✓ Kopiert';
+  setTimeout(() => btn.textContent = 'Link kopieren', 2000);
+}
+
+// ── COACH RESULTS ─────────────────────────────────────────────────────────────
+
+function renderCoachResults(decoded) {
+  const { scores, name, date, gender } = decoded;
+  document.getElementById('results').style.display = 'block';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+
+  const genderLabel = gender === 'w' ? 'Weiblich' : 'Männlich';
+  document.getElementById('resultName').textContent = name || 'Auswertung';
+  document.getElementById('resultMeta').textContent = `${genderLabel} · ${date} · Persönlichkeits-Cockpit`;
+
+  const dominant = Object.entries(scores.profM).sort((a,b) => b[1]-a[1])[0][0];
+  document.getElementById('dominantBanner').innerHTML = `
+    <div class="dominant-letter" style="font-size:1rem;padding:1rem 1.2rem">${STAB_NAMES[dominant]}</div>
+    <div class="dominant-text">
+      <h3>Dominante Dimension: ${STAB_NAMES[dominant]}</h3>
+      <p>Höchster normierter Wert im projizierten Bild: ${scores.profM[dominant]} Punkte</p>
+    </div>
+  `;
+
+  renderBars('barsM', scores.profM);
+  renderBars('barsW', scores.profW);
+  renderBars('barsD', scores.profD);
+  renderInterpretations(scores.profD);
+
+  document.getElementById('rawData').innerHTML = `
+    M-Rohwerte: S=${scores.mCount.S} T=${scores.mCount.T} A=${scores.mCount.A} B=${scores.mCount.B}<br>
+    W-Rohwerte: S=${scores.wCount.S} T=${scores.wCount.T} A=${scores.wCount.A} B=${scores.wCount.B}<br>
+    Differenz:  S=${scores.diff.S} T=${scores.diff.T} A=${scores.diff.A} B=${scores.diff.B}<br><br>
+    Projiziertes Bild (M): S=${scores.profM.S} T=${scores.profM.T} A=${scores.profM.A} B=${scores.profM.B}<br>
+    Inneres Selbst (W):    S=${scores.profW.S} T=${scores.profW.T} A=${scores.profW.A} B=${scores.profW.B}<br>
+    Im Lichte der Umwelt:  S=${scores.profD.S} T=${scores.profD.T} A=${scores.profD.A} B=${scores.profD.B}
+  `;
+
+  setTimeout(() => {
+    document.querySelectorAll('.stab-bar-fill').forEach(el => {
+      el.style.width = el.dataset.pct + '%';
+    });
+  }, 100);
+}
+
+function renderBars(containerId, profile) {
+  const c = document.getElementById(containerId);
+  c.innerHTML = '';
+  ['S','T','A','B'].forEach(dim => {
+    const val = profile[dim];
+    c.innerHTML += `
+      <div class="stab-bar-group">
+        <div class="stab-bar-label">
+          <span class="stab-name" style="color:${STAB_COLORS[dim]}">${STAB_NAMES[dim]}</span>
+          <span class="stab-score">${val}</span>
+        </div>
+        <div class="stab-bar-track">
+          <div class="stab-bar-fill ${dim.toLowerCase()}-bar" data-pct="${val}" style="width:0%"></div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function renderInterpretations(profile) {
+  const c = document.getElementById('interpCards');
+  c.innerHTML = '';
+  const sorted = ['S','T','A','B'].sort((a,b) => profile[b]-profile[a]);
+  sorted.forEach(dim => {
+    const val = profile[dim];
+    const isHigh = val >= 60;
+    const isLow = val <= 40;
+    const interp = INTERPRETATIONS[dim];
+    const card = document.createElement('div');
+    card.className = 'interp-card';
+    card.innerHTML = `
+      <div class="interp-head" onclick="toggleInterp(this)">
+        <div class="interp-badge" style="background:${STAB_COLORS[dim]};font-size:0.7rem;padding:0.4rem 0.6rem">${STAB_NAMES[dim]}</div>
+        <div class="interp-info">
+          <h4>${STAB_NAMES[dim]}</h4>
+          <span>${isHigh ? 'Hoher Wert – ausgeprägt' : isLow ? 'Tiefer Wert – schwach ausgeprägt' : 'Mittlerer Bereich'}</span>
+        </div>
+        <div class="interp-score-badge" style="background:${STAB_COLORS[dim]}">${val}</div>
+      </div>
+      <div class="interp-body ${isHigh || isLow ? 'open' : ''}">
+        ${isHigh ? `<div class="interp-block"><h5 style="color:${STAB_COLORS[dim]}">${interp.high.title}</h5><p>${interp.high.text}</p></div>` : ''}
+        ${isLow ? `<div class="interp-block"><h5 style="color:${STAB_COLORS[dim]}">${interp.low.title}</h5><p>${interp.low.text}</p></div>` : ''}
+        ${!isHigh && !isLow ? `<div class="interp-block"><h5 style="color:${STAB_COLORS[dim]}">Mittlerer Bereich (41–59)</h5><p>Keine ausgeprägte Tendenz – Merkmale beider Pole können situativ auftreten.</p></div>` : ''}
+        <div class="interp-block">
+          <h5 style="color:${STAB_COLORS[dim]}">Beide Pole zur Referenz</h5>
+          <p><strong>Hohe Werte:</strong> ${interp.high.text}</p>
+          <p style="margin-top:0.6rem"><strong>Tiefe Werte:</strong> ${interp.low.text}</p>
+        </div>
+      </div>
+    `;
+    c.appendChild(card);
+  });
+}
+
+function toggleInterp(head) {
+  head.nextElementSibling.classList.toggle('open');
+}
+
+function toggleRaw() {
+  const rd = document.getElementById('rawData');
+  rd.style.display = rd.style.display === 'block' ? 'none' : 'block';
+}
+
+function resetTest() {
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('form-section').style.display = 'block';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+renderQuestions();
+checkCoachUrl();
+</script>
+</body>
+</html>
