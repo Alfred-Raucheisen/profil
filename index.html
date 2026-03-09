@@ -1505,39 +1505,49 @@ function submitTest() {
   const date   = document.getElementById('dateInput').value || '';
   const gender = document.getElementById('genderInput').value || 'm';
 
-  // Store raw counts for word list (collect actual words)
-  _lastAnswers = { mWords: scores._mWords, wWords: scores._wWords };
+  // Store words locally (not in URL to keep it short)
+  _lastAnswers = { mWords: scores._mWords, wWords: scores._wWords, lang: LANG };
 
-  const payload = btoa(JSON.stringify({ scores, name, date, gender, lang: LANG }));
+  // Build payload WITHOUT words to keep URL short
+  const { _mWords, _wWords, ...scoresClean } = scores;
+  const payload = btoa(JSON.stringify({ scores: scoresClean, name, date, gender, lang: LANG }));
   const coachUrl = `${location.origin}${location.pathname}?coach=${payload}`;
 
-  showCoacheeConfirmation(name, coachUrl);
+  showCoacheeConfirmation(name, coachUrl, scores._mWords, scores._wWords);
 }
 
 // ── COACHEE CONFIRMATION PAGE ─────────────────────────────────────────────────
 
-function showCoacheeConfirmation(name, coachUrl) {
+function showCoacheeConfirmation(name, coachUrl, mWords, wWords) {
   document.getElementById('form-section').style.display = 'none';
   document.getElementById('results').style.display = 'none';
 
   const conf = document.getElementById('confirmation');
   conf.style.display = 'block';
-  document.getElementById('conf-name').textContent = name ? `Danke, ${name}!` : 'Vielen Dank!';
+  const l = t();
+  document.getElementById('conf-name').textContent = name ? `${l.thankYou.replace('!','')} ${name}!` : l.thankYou;
+  // Update confirmation texts in current language
+  conf.querySelector('p').textContent = l.confText;
+  conf.querySelector('.conf-sub').textContent = l.confClose;
   window.scrollTo({top: 0, behavior: 'smooth'});
 
-  // Send coach URL via EmailJS
+  // Send coach URL via EmailJS, include word list in email body
   const date = document.getElementById('dateInput').value || new Date().toLocaleDateString('de-CH');
+  const wordSummary = mWords && wWords
+    ? `\nM (${LANG}): ${mWords.join(', ')}\nW (${LANG}): ${wWords.join(', ')}`
+    : '';
   emailjs.send('service_yw6gsbd', 'template_9jbvzjy', {
     coachee_name: name || '(kein Name angegeben)',
     date: date,
-    coach_url: coachUrl
+    coach_url: coachUrl + wordSummary
   }).then(() => {
     const el = document.getElementById('conf-sending');
-    el.textContent = '✓ Auswertung wurde an den Coach übermittelt.';
+    const el = document.getElementById('conf-sending');
+    el.textContent = t().sent;
     el.className = 'conf-status success';
   }).catch(() => {
     const el = document.getElementById('conf-sending');
-    el.textContent = '⚠️ Übermittlung fehlgeschlagen — bitte Coach direkt informieren.';
+    el.textContent = t().sendError;
     el.className = 'conf-status error';
   });
 }
