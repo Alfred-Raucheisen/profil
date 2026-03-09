@@ -700,6 +700,29 @@
     color: var(--navy);
   }
 
+  /* LANGUAGE SWITCHER */
+  .lang-switcher {
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.8rem 0 0.2rem;
+  }
+  .lang-btn {
+    background: rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 6px;
+    padding: 0.3rem 0.8rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+  .lang-btn:hover { background: rgba(255,255,255,0.2); }
+  .lang-btn.active { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+
   @media (max-width: 600px) {
     .column-labels, .word-row {
       grid-template-columns: 1fr 60px 60px;
@@ -715,9 +738,14 @@
 <body>
 
 <div class="header">
-  <h1>Persönlichkeits-Cockpit</h1>
-  <p>Identität, Verhalten und Wirkung</p>
+  <h1 id="hTitle">Persönlichkeits-Cockpit</h1>
+  <p id="hSubtitle">Identität, Verhalten und Wirkung</p>
   <div class="gold-line"></div>
+  <div class="lang-switcher">
+    <button class="lang-btn active" onclick="setLang('de')">DE</button>
+    <button class="lang-btn" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('fr')">FR</button>
+  </div>
 </div>
 
 <div class="container">
@@ -727,24 +755,24 @@
 
     <div class="setup-card">
       <div class="field">
-        <label>Name</label>
+        <label id="lName">Name</label>
         <input type="text" id="nameInput" placeholder="Ihr Name">
       </div>
       <div class="field">
-        <label>Datum</label>
+        <label id="lDate">Datum</label>
         <input type="date" id="dateInput">
       </div>
       <div class="field">
-        <label>Geschlecht</label>
+        <label id="lGender">Geschlecht</label>
         <select id="genderInput">
-          <option value="">Bitte wählen</option>
-          <option value="m">Männlich</option>
-          <option value="w">Weiblich</option>
+          <option value="" id="gPleaseSelect">Bitte wählen</option>
+          <option value="m" id="gMale">Männlich</option>
+          <option value="w" id="gFemale">Weiblich</option>
         </select>
       </div>
     </div>
 
-    <div class="instructions">
+    <div class="instructions" id="instructionsText">
       <strong>Anleitung:</strong> Wählen Sie in jeder Gruppe von vier Begriffen den Begriff,
       der <strong style="color:var(--blue)">am meisten (M)</strong> auf Sie zutrifft, und den Begriff,
       der <strong style="color:#9c7a0a">am wenigsten (W)</strong> auf Sie zutrifft.
@@ -784,29 +812,32 @@
       <button class="btn-reset" onclick="resetTest()">← Neu ausfüllen</button>
     </div>
 
-    <div class="dominant-banner" id="dominantBanner"></div>
-
-    <div class="profiles-grid">
-      <div class="profile-card" id="profileM">
-        <h3>Projiziertes Bild <span class="profile-hint">(M-Werte)</span></h3>
-        <p class="profile-desc">Wie Sie sich nach aussen zeigen möchten — Ihr bewusstes, sozial geprägtes Selbstbild.</p>
-        <div id="barsM"></div>
-      </div>
-      <div class="profile-card" id="profileW">
-        <h3>Inneres Selbst <span class="profile-hint">(W-Werte)</span></h3>
-        <p class="profile-desc">Wie Sie sich innerlich erleben — Ihr authentischeres, tieferes Persönlichkeitsprofil.</p>
-        <div id="barsW"></div>
-      </div>
-      <div class="profile-card profile-card--highlight" id="profileD">
-        <h3>Im Lichte der Umwelt <span class="profile-hint">(M−W)</span></h3>
-        <p class="profile-desc">Die Differenz zwischen Aussen- und Innenbild — zeigt Rollenanpassung und potenzielle innere Spannung. <strong>Basis der Coaching-Interpretation.</strong></p>
-        <div id="barsD"></div>
+    <div id="exportProfiles">
+      <div class="dominant-banner" id="dominantBanner"></div>
+      <div class="profiles-grid">
+        <div class="profile-card" id="profileM">
+          <h3>Projiziertes Bild <span class="profile-hint">(M-Werte)</span></h3>
+          <p class="profile-desc">Wie Sie sich nach aussen zeigen möchten — Ihr bewusstes, sozial geprägtes Selbstbild.</p>
+          <div id="barsM"></div>
+        </div>
+        <div class="profile-card" id="profileW">
+          <h3>Inneres Selbst <span class="profile-hint">(W-Werte)</span></h3>
+          <p class="profile-desc">Wie Sie sich innerlich erleben — Ihr authentischeres, tieferes Persönlichkeitsprofil.</p>
+          <div id="barsW"></div>
+        </div>
+        <div class="profile-card profile-card--highlight" id="profileD">
+          <h3>Im Lichte der Umwelt <span class="profile-hint">(M−W)</span></h3>
+          <p class="profile-desc">Die Differenz zwischen Aussen- und Innenbild — zeigt Rollenanpassung und potenzielle innere Spannung. <strong>Basis der Coaching-Interpretation.</strong></p>
+          <div id="barsD"></div>
+        </div>
       </div>
     </div>
 
-    <div class="interpretation-section">
-      <div class="interp-title">Interpretation Ihrer Werte</div>
-      <div id="interpCards"></div>
+    <div id="exportInterp">
+      <div class="interpretation-section">
+        <div class="interp-title">Interpretation Ihrer Werte</div>
+        <div id="interpCards"></div>
+      </div>
     </div>
 
     <span class="raw-toggle" onclick="toggleRaw()">Rohdaten anzeigen</span>
@@ -814,7 +845,8 @@
 
     <div class="coach-actions">
       <button class="coach-btn" onclick="toggleWordList()">📋 Gewählte Wörter anzeigen</button>
-      <button class="coach-btn" onclick="exportPNG()">🖼 Als Bild exportieren</button>
+      <button class="coach-btn" onclick="exportProfiles()">📊 Profil exportieren</button>
+      <button class="coach-btn" onclick="exportInterpretation()">📄 Interpretation exportieren</button>
     </div>
     <div id="wordList" style="display:none" class="word-list-section"></div>
   </div>
@@ -822,58 +854,329 @@
 </div>
 
 <script>
-// ── DATA ────────────────────────────────────────────────────────────────────
+// ── LANGUAGE / I18N ──────────────────────────────────────────────────────────
 
-// 32 rows × 3 words each, grouped into 24 groups of 4 rows
-// Each row: [word_col0, word_col1, word_col2, stab_col0, stab_col1, stab_col2]
-// IMPORTANT: Each column set has its OWN STAB assignment per row (they differ!)
-const WORDS = [
-  ['begeisterungsfähig','methodisch','selbstsicher','B','T','A'],
-  ['respektvoll','bereitwillig','zuverlässig','S','S','T'],
-  ['entschlossen','fröhlich','nachdenklich','A','B','S'],
-  ['aufrichtig','ungebunden','kollegial','T','A','B'],
-  ['beherzt','gesellig','harmonisch','A','B','T'],
-  ['anregend','rücksichtsvoll','diplomatisch','B','S','S'],
-  ['sympatisch','treuherzig','erfinderisch','T','T','A'],
-  ['kontrolliert','reaktionsschnell','lebensfroh','S','A','B'],
-  ['nachsichtig','direkt','energisch','T','A','A'],
-  ['streitbar','bewahrend','anziehend','A','T','B'],
-  ['attraktiv','überzeugend','genau','B','B','S'],
-  ['diszipliniert','duldsam','gelassen','S','S','T'],
-  ['vertrauend','ordentlich','empfindsam','B','S','S'],
-  ['beständig','treu','optimistisch','T','T','B'],
-  ['zupackend','grosszügig','tatkräftig','A','B','A'],
-  ['ernsthaft','wagemutig','wohlwollend','S','A','T'],
-  ['ausdauernd','unabhängig','phantasievoll','T','A','B'],
-  ['zugewandt','perfektionistisch','geduldig','B','S','T'],
-  ['risikofreudig','einsichtig','konzentriert','A','T','S'],
-  ['sorgfältig','bewegend','kraftvoll','S','B','A'],
-  ['nachgiebig','gewissenhaft','genügsam','S','S','T'],
-  ['gewinnend','gütig','unnachgiebig','B','T','A'],
-  ['ruhig','strebsam','fügsam','T','A','S'],
-  ['zielsicher','freundschaftlich','adrett','A','B','B'],
-  ['forsch','bedacht','bescheiden','A','T','S'],
-  ['präzise','gesprächig','wirkungsvoll','S','B','A'],
-  ['massvoll','sorgsam','liebenswert','T','S','B'],
-  ['reizend','unternehmenslustig','verlässlich','B','A','T'],
-  ['kontaktfreudig','verhalten','kultiviert','B','S','B'],
-  ['arbeitsam','bahnbrechend','wetteifernd','A','A','A'],
-  ['willig','zufrieden','zugänglich','T','T','S'],
-  ['besonnen','beliebt','konventionell','S','B','T'],
-];
+let LANG = 'de';
 
-// Groups of 4 consecutive rows = one question set
-// 8 groups × 3 columns = 24 question groups total
-const GROUPS = [];
-for (let col = 0; col < 3; col++) {
-  for (let g = 0; g < 8; g++) {
-    const rows = WORDS.slice(g*4, g*4+4);
-    GROUPS.push({ col, g, rows, idx: col*8+g });
+const I18N = {
+  de: {
+    title: 'Persönlichkeits-Cockpit',
+    subtitle: 'Identität, Verhalten und Wirkung',
+    lName: 'Name', lDate: 'Datum', lGender: 'Geschlecht',
+    gPleaseSelect: 'Bitte wählen', gMale: 'Männlich', gFemale: 'Weiblich',
+    namePlaceholder: 'Ihr Name',
+    instructions: '<strong>Anleitung:</strong> Wählen Sie in jeder Gruppe von vier Begriffen den Begriff, der <strong style="color:var(--blue)">am meisten (M)</strong> auf Sie zutrifft, und den Begriff, der <strong style="color:#9c7a0a">am wenigsten (W)</strong> auf Sie zutrifft. Bearbeiten Sie die Felder zügig und hören Sie auf Ihre Intuition. Dauer: ca. 10 Minuten.',
+    groupOf: (i,n) => `Gruppe ${i} von ${n}`,
+    notFilled: 'Noch nicht ausgefüllt',
+    colMost: 'M', colMostLabel: 'Meisten',
+    colLeast: 'W', colLeastLabel: 'Wenigsten',
+    progress: (d,t) => `${d} von ${t} Gruppen ausgefüllt`,
+    submitBtn: 'Auswerten →',
+    errorMsg: 'Bitte füllen Sie alle Gruppen vollständig aus.',
+    thankYou: 'Vielen Dank!',
+    confText: 'Ihre Antworten wurden erfasst. Ihr Coach wird die Auswertung im nächsten Meeting mit Ihnen besprechen.',
+    confClose: 'Sie können dieses Fenster schliessen.',
+    sending: '⏳ Auswertung wird übermittelt…',
+    sent: '✓ Auswertung wurde an den Coach übermittelt.',
+    sendError: '⚠️ Übermittlung fehlgeschlagen — bitte Coach direkt informieren.',
+    resetBtn: '← Neu ausfüllen',
+    dominant: 'Dominante Dimension',
+    highestNorm: 'Höchster normierter Wert im projizierten Bild',
+    profileMTitle: 'Projiziertes Bild', profileMHint: '(M-Werte)',
+    profileMDesc: 'Wie Sie sich nach aussen zeigen möchten — Ihr bewusstes, sozial geprägtes Selbstbild.',
+    profileWTitle: 'Inneres Selbst', profileWHint: '(W-Werte)',
+    profileWDesc: 'Wie Sie sich innerlich erleben — Ihr authentischeres, tieferes Persönlichkeitsprofil.',
+    profileDTitle: 'Im Lichte der Umwelt', profileDHint: '(M−W)',
+    profileDDesc: 'Die Differenz zwischen Aussen- und Innenbild — zeigt Rollenanpassung und potenzielle innere Spannung.',
+    profileDStrong: 'Basis der Coaching-Interpretation.',
+    interpTitle: 'Interpretation Ihrer Werte',
+    interpHigh: 'Hoher Wert – ausgeprägt',
+    interpLow: 'Tiefer Wert – schwach ausgeprägt',
+    interpMid: 'Mittlerer Bereich',
+    interpMidText: 'Keine ausgeprägte Tendenz – Merkmale beider Pole können situativ auftreten.',
+    interpBothPoles: 'Beide Pole zur Referenz',
+    interpHighLabel: 'Hohe Werte:', interpLowLabel: 'Tiefe Werte:',
+    rawToggle: 'Rohdaten anzeigen',
+    btnWords: '📋 Gewählte Wörter anzeigen',
+    btnProfile: '📊 Profil exportieren',
+    btnInterp: '📄 Interpretation exportieren',
+    wordListTitle: 'Gewählte Wörter',
+    wordMost: n => `M — Passt am meisten (${n})`,
+    wordLeast: n => `W — Passt am wenigsten (${n})`,
+    noWordData: 'Keine Wortdaten verfügbar.',
+    stabNames: { S: 'Sorgfalt', T: 'Geduld', A: 'Tatkraft', B: 'Begeisterung' },
+    genderLabel: g => g === 'w' ? 'Weiblich' : 'Männlich',
+    metaSuffix: 'Persönlichkeits-Cockpit',
+    points: 'Punkte',
+  },
+  en: {
+    title: 'Personality Cockpit',
+    subtitle: 'Identity, Behaviour and Impact',
+    lName: 'Name', lDate: 'Date', lGender: 'Gender',
+    gPleaseSelect: 'Please select', gMale: 'Male', gFemale: 'Female',
+    namePlaceholder: 'Your name',
+    instructions: '<strong>Instructions:</strong> In each group of four terms, choose the one that fits you <strong style="color:var(--blue)">most (M)</strong> and the one that fits you <strong style="color:#9c7a0a">least (W)</strong>. Work through quickly and trust your intuition. Duration: approx. 10 minutes.',
+    groupOf: (i,n) => `Group ${i} of ${n}`,
+    notFilled: 'Not yet completed',
+    colMost: 'M', colMostLabel: 'Most',
+    colLeast: 'L', colLeastLabel: 'Least',
+    progress: (d,t) => `${d} of ${t} groups completed`,
+    submitBtn: 'Evaluate →',
+    errorMsg: 'Please complete all groups.',
+    thankYou: 'Thank you!',
+    confText: 'Your answers have been recorded. Your coach will discuss the results with you in your next meeting.',
+    confClose: 'You may close this window.',
+    sending: '⏳ Sending results…',
+    sent: '✓ Results sent to coach.',
+    sendError: '⚠️ Sending failed — please inform your coach directly.',
+    resetBtn: '← Start over',
+    dominant: 'Dominant Dimension',
+    highestNorm: 'Highest normalised score in projected image',
+    profileMTitle: 'Projected Image', profileMHint: '(M-values)',
+    profileMDesc: 'How you wish to present yourself — your conscious, socially shaped self-image.',
+    profileWTitle: 'Inner Self', profileWHint: '(W-values)',
+    profileWDesc: 'How you experience yourself inwardly — your more authentic, deeper personality profile.',
+    profileDTitle: 'In the Light of the Environment', profileDHint: '(M−W)',
+    profileDDesc: 'The difference between outer and inner image — shows role adaptation and potential inner tension.',
+    profileDStrong: 'Basis for coaching interpretation.',
+    interpTitle: 'Interpretation of Your Scores',
+    interpHigh: 'High score – pronounced',
+    interpLow: 'Low score – weakly pronounced',
+    interpMid: 'Middle range',
+    interpMidText: 'No pronounced tendency – traits of both poles may appear situationally.',
+    interpBothPoles: 'Both poles for reference',
+    interpHighLabel: 'High scores:', interpLowLabel: 'Low scores:',
+    rawToggle: 'Show raw data',
+    btnWords: '📋 Show selected words',
+    btnProfile: '📊 Export profile',
+    btnInterp: '📄 Export interpretation',
+    wordListTitle: 'Selected Words',
+    wordMost: n => `M — Fits most (${n})`,
+    wordLeast: n => `L — Fits least (${n})`,
+    noWordData: 'No word data available.',
+    stabNames: { S: 'Conscientiousness', T: 'Steadiness', A: 'Dominance', B: 'Influence' },
+    genderLabel: g => g === 'w' ? 'Female' : 'Male',
+    metaSuffix: 'Personality Cockpit',
+    points: 'points',
+  },
+  fr: {
+    title: 'Cockpit de Personnalité',
+    subtitle: 'Identité, Comportement et Impact',
+    lName: 'Nom', lDate: 'Date', lGender: 'Sexe',
+    gPleaseSelect: 'Veuillez choisir', gMale: 'Masculin', gFemale: 'Féminin',
+    namePlaceholder: 'Votre nom',
+    instructions: '<strong>Instructions:</strong> Dans chaque groupe de quatre termes, choisissez celui qui vous correspond le <strong style="color:var(--blue)">mieux (M)</strong> et celui qui vous correspond le <strong style="color:#9c7a0a">moins (W)</strong>. Répondez rapidement en écoutant votre intuition. Durée: env. 10 minutes.',
+    groupOf: (i,n) => `Groupe ${i} sur ${n}`,
+    notFilled: 'Pas encore rempli',
+    colMost: 'M', colMostLabel: 'Le plus',
+    colLeast: 'W', colLeastLabel: 'Le moins',
+    progress: (d,t) => `${d} sur ${t} groupes remplis`,
+    submitBtn: 'Évaluer →',
+    errorMsg: 'Veuillez compléter tous les groupes.',
+    thankYou: 'Merci beaucoup!',
+    confText: 'Vos réponses ont été enregistrées. Votre coach discutera des résultats avec vous lors de votre prochaine séance.',
+    confClose: 'Vous pouvez fermer cette fenêtre.',
+    sending: '⏳ Envoi en cours…',
+    sent: '✓ Résultats envoyés au coach.',
+    sendError: '⚠️ Échec de l\'envoi — veuillez informer votre coach directement.',
+    resetBtn: '← Recommencer',
+    dominant: 'Dimension dominante',
+    highestNorm: 'Valeur normalisée la plus élevée dans l\'image projetée',
+    profileMTitle: 'Image projetée', profileMHint: '(valeurs M)',
+    profileMDesc: 'Comment vous souhaitez vous présenter — votre image de soi consciente et socialement façonnée.',
+    profileWTitle: 'Moi intérieur', profileWHint: '(valeurs W)',
+    profileWDesc: 'Comment vous vous vivez intérieurement — votre profil de personnalité plus authentique.',
+    profileDTitle: 'À la lumière de l\'environnement', profileDHint: '(M−W)',
+    profileDDesc: 'La différence entre image extérieure et intérieure — montre l\'adaptation au rôle et les tensions potentielles.',
+    profileDStrong: 'Base de l\'interprétation coaching.',
+    interpTitle: 'Interprétation de vos valeurs',
+    interpHigh: 'Valeur élevée – prononcée',
+    interpLow: 'Valeur faible – peu prononcée',
+    interpMid: 'Zone médiane',
+    interpMidText: 'Pas de tendance prononcée – les traits des deux pôles peuvent apparaître selon la situation.',
+    interpBothPoles: 'Les deux pôles pour référence',
+    interpHighLabel: 'Valeurs élevées:', interpLowLabel: 'Valeurs faibles:',
+    rawToggle: 'Afficher les données brutes',
+    btnWords: '📋 Afficher les mots choisis',
+    btnProfile: '📊 Exporter le profil',
+    btnInterp: '📄 Exporter l\'interprétation',
+    wordListTitle: 'Mots choisis',
+    wordMost: n => `M — Convient le mieux (${n})`,
+    wordLeast: n => `W — Convient le moins (${n})`,
+    noWordData: 'Aucune donnée de mots disponible.',
+    stabNames: { S: 'Rigueur', T: 'Patience', A: 'Dynamisme', B: 'Enthousiasme' },
+    genderLabel: g => g === 'w' ? 'Féminin' : 'Masculin',
+    metaSuffix: 'Cockpit de Personnalité',
+    points: 'points',
+  },
+};
+
+function t() { return I18N[LANG]; }
+
+function setLang(lang) {
+  LANG = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent === lang.toUpperCase()));
+  applyTranslations();
+  // If coach view is active, re-render results in new language
+  if (document.getElementById('results').style.display !== 'none') {
+    const params = new URLSearchParams(window.location.search);
+    const data = params.get('coach');
+    if (data && data !== 'true') {
+      try {
+        const decoded = JSON.parse(atob(data));
+        renderCoachResultsInLang(decoded);
+      } catch(e) {}
+    }
+  } else {
+    // Re-render questions with new words
+    const container = document.getElementById('questions-container');
+    if (container && container.children.length > 0) {
+      container.innerHTML = '';
+      renderQuestions();
+    }
   }
 }
-// Reorder: col0 g0-7, col1 g0-7, col2 g0-7 → interleave by column group
-// Actually present them column by column as in original
-// Groups 0-7 = col A words, 8-15 = col B words, 16-23 = col C words
+
+function applyTranslations() {
+  const l = t();
+  document.getElementById('hTitle').textContent = l.title;
+  document.getElementById('hSubtitle').textContent = l.subtitle;
+  document.getElementById('lName').textContent = l.lName;
+  document.getElementById('lDate').textContent = l.lDate;
+  document.getElementById('lGender').textContent = l.lGender;
+  document.getElementById('nameInput').placeholder = l.namePlaceholder;
+  document.getElementById('gPleaseSelect').textContent = l.gPleaseSelect;
+  document.getElementById('gMale').textContent = l.gMale;
+  document.getElementById('gFemale').textContent = l.gFemale;
+  document.getElementById('instructionsText').innerHTML = l.instructions;
+  document.getElementById('errorMsg').textContent = l.errorMsg;
+  const submitBtn = document.querySelector('.btn-submit');
+  if (submitBtn) submitBtn.textContent = l.submitBtn;
+}
+
+// ── WORD ARRAYS ──────────────────────────────────────────────────────────────
+
+const WORDS_ALL = {
+  de: [
+    ['begeisterungsfähig','methodisch','selbstsicher','B','T','A'],
+    ['respektvoll','bereitwillig','zuverlässig','S','S','T'],
+    ['entschlossen','fröhlich','nachdenklich','A','B','S'],
+    ['aufrichtig','ungebunden','kollegial','T','A','B'],
+    ['beherzt','gesellig','harmonisch','A','B','T'],
+    ['anregend','rücksichtsvoll','diplomatisch','B','S','S'],
+    ['sympathisch','treuherzig','erfinderisch','T','T','A'],
+    ['kontrolliert','reaktionsschnell','lebensfroh','S','A','B'],
+    ['nachsichtig','direkt','energisch','T','A','A'],
+    ['streitbar','bewahrend','anziehend','A','T','B'],
+    ['attraktiv','überzeugend','genau','B','B','S'],
+    ['diszipliniert','duldsam','gelassen','S','S','T'],
+    ['vertrauend','ordentlich','empfindsam','B','S','S'],
+    ['beständig','treu','optimistisch','T','T','B'],
+    ['zupackend','grosszügig','tatkräftig','A','B','A'],
+    ['ernsthaft','wagemutig','wohlwollend','S','A','T'],
+    ['ausdauernd','unabhängig','phantasievoll','T','A','B'],
+    ['zugewandt','perfektionistisch','geduldig','B','S','T'],
+    ['risikofreudig','einsichtig','konzentriert','A','T','S'],
+    ['sorgfältig','bewegend','kraftvoll','S','B','A'],
+    ['nachgiebig','gewissenhaft','genügsam','S','S','T'],
+    ['gewinnend','gütig','unnachgiebig','B','T','A'],
+    ['ruhig','strebsam','fügsam','T','A','S'],
+    ['zielsicher','freundschaftlich','adrett','A','B','B'],
+    ['forsch','bedacht','bescheiden','A','T','S'],
+    ['präzise','gesprächig','wirkungsvoll','S','B','A'],
+    ['massvoll','sorgsam','liebenswert','T','S','B'],
+    ['reizend','unternehmenslustig','verlässlich','B','A','T'],
+    ['kontaktfreudig','verhalten','kultiviert','B','S','B'],
+    ['arbeitsam','bahnbrechend','wetteifernd','A','A','A'],
+    ['willig','zufrieden','zugänglich','T','T','S'],
+    ['besonnen','beliebt','konventionell','S','B','T'],
+  ],
+  en: [
+    ['enthusiastic','methodical','self-confident','B','T','A'],
+    ['respectful','eager','reliable','S','S','T'],
+    ['determined','cheerful','reflective','A','B','S'],
+    ['candid','uncommitted','cooperative','T','A','B'],
+    ['courageous','sociable','harmonious','A','B','T'],
+    ['stimulating','considerate','diplomatic','B','S','S'],
+    ['likeable','loyal','inventive','T','T','A'],
+    ['controlled','responsive','joyful','S','A','B'],
+    ['indulgent','direct','vigorous','T','A','A'],
+    ['assertive','conservative','attractive','A','T','B'],
+    ['appealing','convincing','precise','B','B','S'],
+    ['disciplined','tolerant','composed','S','S','T'],
+    ['trusting','orderly','sensitive','B','S','S'],
+    ['steady','faithful','optimistic','T','T','B'],
+    ['hands-on','generous','energetic','A','B','A'],
+    ['serious','bold','benevolent','S','A','T'],
+    ['persistent','independent','imaginative','T','A','B'],
+    ['engaged','perfectionist','patient','B','S','T'],
+    ['risk-taking','perceptive','focused','A','T','S'],
+    ['careful','touching','powerful','S','B','A'],
+    ['flexible','conscientious','modest','S','S','T'],
+    ['charming','kind','relentless','B','T','A'],
+    ['calm','ambitious','compliant','T','A','S'],
+    ['goal-oriented','friendly','dapper','A','B','B'],
+    ['upfront','prudent','humble','A','T','S'],
+    ['accurate','talkative','effective','S','B','A'],
+    ['measured','diligent','loveable','T','S','B'],
+    ['delightful','enterprising','dependable','B','A','T'],
+    ['outgoing','reserved','cultivated','B','S','B'],
+    ['hardworking','groundbreaking','competitive','A','A','A'],
+    ['willing','content','accessible','T','T','S'],
+    ['composed','popular','conventional','S','B','T'],
+  ],
+  fr: [
+    ['enthousiaste','méthodique','sûr(e) de soi','B','T','A'],
+    ['respectueux/euse','disposé(e)','fiable','S','S','T'],
+    ['déterminé(e)','enjoué(e)','réfléchi(e)','A','B','S'],
+    ['sincère','libre','collégial(e)','T','A','B'],
+    ['courageux/euse','sociable','harmonieux/euse','A','B','T'],
+    ['stimulant(e)','prévenant(e)','diplomatique','B','S','S'],
+    ['sympathique','loyal(e)','inventif/ive','T','T','A'],
+    ['maîtrisé(e)','réactif/ive','joyeux/euse','S','A','B'],
+    ['indulgent(e)','direct(e)','énergique','T','A','A'],
+    ['combatif/ive','préservateur/trice','attrayant(e)','A','T','B'],
+    ['séduisant(e)','convaincant(e)','précis(e)','B','B','S'],
+    ['discipliné(e)','tolérant(e)','serein(e)','S','S','T'],
+    ['confiant(e)','ordonné(e)','sensible','B','S','S'],
+    ['constant(e)','fidèle','optimiste','T','T','B'],
+    ['dynamique','généreux/euse','actif/ive','A','B','A'],
+    ['sérieux/euse','audacieux/euse','bienveillant(e)','S','A','T'],
+    ['persévérant(e)','indépendant(e)','imaginatif/ive','T','A','B'],
+    ['attentionné(e)','perfectionniste','patient(e)','B','S','T'],
+    ['téméraire','perspicace','concentré(e)','A','T','S'],
+    ['soigneux/euse','émouvant(e)','puissant(e)','S','B','A'],
+    ['accommodant(e)','consciencieux/euse','sobre','S','S','T'],
+    ['charmant(e)','bon(ne)','inflexible','B','T','A'],
+    ['calme','ambitieux/euse','docile','T','A','S'],
+    ['déterminé(e)','amical(e)','soigné(e)','A','B','B'],
+    ['résolu(e)','prudent(e)','modeste','A','T','S'],
+    ['rigoureux/euse','communicatif/ive','efficace','S','B','A'],
+    ['mesuré(e)','attentif/ive','aimable','T','S','B'],
+    ['charmant(e)','entreprenant(e)','de confiance','B','A','T'],
+    ['avenant(e)','réservé(e)','cultivé(e)','B','S','B'],
+    ['travailleur/euse','novateur/trice','compétitif/ive','A','A','A'],
+    ['volontaire','satisfait(e)','accessible','T','T','S'],
+    ['posé(e)','populaire','conventionnel(le)','S','B','T'],
+  ],
+};
+
+function getWords() { return WORDS_ALL[LANG]; }
+
+
+// GROUPS are built dynamically from current language
+function buildGroups() {
+  const W = getWords();
+  const groups = [];
+  for (let col = 0; col < 3; col++) {
+    for (let g = 0; g < 8; g++) {
+      const rows = W.slice(g*4, g*4+4);
+      groups.push({ col, g, rows, idx: col*8+g });
+    }
+  }
+  return groups;
+}
+function getGroups() { return buildGroups(); }
 
 // Normalization tables
 const LOOKUP_M = {
@@ -1009,6 +1312,8 @@ const INTERPRETATIONS = {
 
 function renderQuestions() {
   const container = document.getElementById('questions-container');
+  const l = t();
+  const GROUPS = getGroups();
 
   GROUPS.forEach((grp, gi) => {
 
@@ -1018,13 +1323,13 @@ function renderQuestions() {
 
     div.innerHTML = `
       <div class="group-header">
-        <span class="group-num">Gruppe ${gi + 1} von 24</span>
-        <span class="group-status" id="status-${gi}">Noch nicht ausgefüllt</span>
+        <span class="group-num">${l.groupOf(gi + 1, 24)}</span>
+        <span class="group-status" id="status-${gi}">${l.notFilled}</span>
       </div>
       <div class="column-labels">
-        <div class="col-label">Begriff</div>
-        <div class="col-label" style="color:var(--blue)">M<br><span style="font-weight:400;text-transform:none;letter-spacing:0">Meisten</span></div>
-        <div class="col-label" style="color:#9c7a0a">W<br><span style="font-weight:400;text-transform:none;letter-spacing:0">Wenigsten</span></div>
+        <div class="col-label">—</div>
+        <div class="col-label" style="color:var(--blue)">${l.colMost}<br><span style="font-weight:400;text-transform:none;letter-spacing:0">${l.colMostLabel}</span></div>
+        <div class="col-label" style="color:#9c7a0a">${l.colLeast}<br><span style="font-weight:400;text-transform:none;letter-spacing:0">${l.colLeastLabel}</span></div>
       </div>
     `;
 
@@ -1064,12 +1369,11 @@ function onRadioChange(gi) {
   const wVal = document.querySelector(`input[name="W-${gi}"]:checked`)?.value;
   const grp = document.getElementById(`grp-${gi}`);
   const status = document.getElementById(`status-${gi}`);
+  const l = t();
 
-  // Prevent same selection for M and W
   if (mVal !== undefined && wVal !== undefined && mVal === wVal) {
-    // Clear W if same as M
     document.querySelectorAll(`input[name="W-${gi}"]`).forEach(r => r.checked = false);
-    status.textContent = 'M und W müssen verschieden sein';
+    status.textContent = LANG === 'fr' ? 'M et W doivent être différents' : LANG === 'en' ? 'M and L must differ' : 'M und W müssen verschieden sein';
     grp.classList.remove('complete');
     grp.classList.add('error');
     updateProgress();
@@ -1079,7 +1383,7 @@ function onRadioChange(gi) {
   const complete = mVal !== undefined && wVal !== undefined && mVal !== wVal;
   grp.classList.toggle('complete', complete);
   grp.classList.toggle('error', false);
-  status.textContent = complete ? '✓ Ausgefüllt' : 'Bitte M und W wählen';
+  status.textContent = complete ? '✓' : (LANG === 'fr' ? 'Choisir M et W' : LANG === 'en' ? 'Select M and L' : 'Bitte M und W wählen');
   updateProgress();
 }
 
@@ -1092,7 +1396,7 @@ function updateProgress() {
   }
   const pct = (done / 24) * 100;
   document.getElementById('progressBar').style.width = pct + '%';
-  document.getElementById('progressLabel').textContent = `${done} von 24 Gruppen ausgefüllt`;
+  document.getElementById('progressLabel').textContent = t().progress(done, 24);
 }
 
 // ── SCORING ─────────────────────────────────────────────────────────────────
@@ -1100,16 +1404,15 @@ function updateProgress() {
 function lookup(table, val, stabIdx) {
   const key = String(Math.max(-16, Math.min(18, Math.round(val))));
   if (table[key] !== undefined) return table[key][stabIdx];
-  // Clamp
   if (val < -16) return table['-16'][stabIdx];
   return table['18'][stabIdx];
 }
 
 function computeScores() {
-  // Count M and W selections per STAB dimension across all 24 groups
   const mCount = {S:0, T:0, A:0, B:0};
   const wCount = {S:0, T:0, A:0, B:0};
   const mWords = [], wWords = [];
+  const GROUPS = getGroups();
 
   for (let gi = 0; gi < 24; gi++) {
     const mVal = parseInt(document.querySelector(`input[name="M-${gi}"]:checked`)?.value);
@@ -1205,7 +1508,7 @@ function submitTest() {
   // Store raw counts for word list (collect actual words)
   _lastAnswers = { mWords: scores._mWords, wWords: scores._wWords };
 
-  const payload = btoa(JSON.stringify({ scores, name, date, gender }));
+  const payload = btoa(JSON.stringify({ scores, name, date, gender, lang: LANG }));
   const coachUrl = `${location.origin}${location.pathname}?coach=${payload}`;
 
   showCoacheeConfirmation(name, coachUrl);
@@ -1242,23 +1545,46 @@ function showCoacheeConfirmation(name, coachUrl) {
 // ── COACH RESULTS ─────────────────────────────────────────────────────────────
 
 function renderCoachResults(decoded) {
-  const { scores, name, date, gender } = decoded;
-  _lastAnswers = { mWords: scores._mWords || [], wWords: scores._wWords || [] };
+  const { scores, name, date, gender, lang } = decoded;
+  // Always show coach view in DE by default; keep coachee lang for word list only
+  LANG = 'de';
+  const coacheeLang = lang || 'de';
+  const l = t();
+  _lastAnswers = { mWords: scores._mWords || [], wWords: scores._wWords || [], lang: coacheeLang };
   document.getElementById('results').style.display = 'block';
   window.scrollTo({top: 0, behavior: 'smooth'});
 
-  const genderLabel = gender === 'w' ? 'Weiblich' : 'Männlich';
-  document.getElementById('resultName').textContent = name || 'Auswertung';
-  document.getElementById('resultMeta').textContent = `${genderLabel} · ${date} · Persönlichkeits-Cockpit`;
+  // Update lang buttons
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent === LANG.toUpperCase()));
 
+  const genderLabel = l.genderLabel(gender);
+  document.getElementById('resultName').textContent = name || l.interpTitle;
+  document.getElementById('resultMeta').textContent = `${genderLabel} · ${date} · ${l.metaSuffix}`;
+
+  const STAB_NAMES = l.stabNames;
   const dominant = Object.entries(scores.profM).sort((a,b) => b[1]-a[1])[0][0];
   document.getElementById('dominantBanner').innerHTML = `
     <div class="dominant-letter" style="font-size:1rem;padding:1rem 1.2rem">${STAB_NAMES[dominant]}</div>
     <div class="dominant-text">
-      <h3>Dominante Dimension: ${STAB_NAMES[dominant]}</h3>
-      <p>Höchster normierter Wert im projizierten Bild: ${scores.profM[dominant]} Punkte</p>
+      <h3>${l.dominant}: ${STAB_NAMES[dominant]}</h3>
+      <p>${l.highestNorm}: ${scores.profM[dominant]} ${l.points}</p>
     </div>
   `;
+
+  // Update profile card titles/desc
+  document.querySelector('#profileM h3').innerHTML = `${l.profileMTitle} <span class="profile-hint">${l.profileMHint}</span>`;
+  document.querySelector('#profileM .profile-desc').textContent = l.profileMDesc;
+  document.querySelector('#profileW h3').innerHTML = `${l.profileWTitle} <span class="profile-hint">${l.profileWHint}</span>`;
+  document.querySelector('#profileW .profile-desc').textContent = l.profileWDesc;
+  document.querySelector('#profileD h3').innerHTML = `${l.profileDTitle} <span class="profile-hint">${l.profileDHint}</span>`;
+  document.querySelector('#profileD .profile-desc').innerHTML = `${l.profileDDesc} <strong>${l.profileDStrong}</strong>`;
+  document.querySelector('#exportInterp .interp-title').textContent = l.interpTitle;
+  document.querySelector('.raw-toggle').textContent = l.rawToggle;
+  document.querySelector('.btn-reset').textContent = l.resetBtn;
+  const btns = document.querySelectorAll('.coach-btn');
+  if (btns[0]) btns[0].textContent = l.btnWords;
+  if (btns[1]) btns[1].textContent = l.btnProfile;
+  if (btns[2]) btns[2].textContent = l.btnInterp;
 
   renderBars('barsM', scores.profM);
   renderBars('barsW', scores.profW);
@@ -1266,12 +1592,9 @@ function renderCoachResults(decoded) {
   renderInterpretations(scores.profD);
 
   document.getElementById('rawData').innerHTML = `
-    M-Rohwerte: S=${scores.mCount.S} T=${scores.mCount.T} A=${scores.mCount.A} B=${scores.mCount.B}<br>
-    W-Rohwerte: S=${scores.wCount.S} T=${scores.wCount.T} A=${scores.wCount.A} B=${scores.wCount.B}<br>
-    Differenz:  S=${scores.diff.S} T=${scores.diff.T} A=${scores.diff.A} B=${scores.diff.B}<br><br>
-    Projiziertes Bild (M): S=${scores.profM.S} T=${scores.profM.T} A=${scores.profM.A} B=${scores.profM.B}<br>
-    Inneres Selbst (W):    S=${scores.profW.S} T=${scores.profW.T} A=${scores.profW.A} B=${scores.profW.B}<br>
-    Im Lichte der Umwelt:  S=${scores.profD.S} T=${scores.profD.T} A=${scores.profD.A} B=${scores.profD.B}
+    M: S=${scores.mCount.S} T=${scores.mCount.T} A=${scores.mCount.A} B=${scores.mCount.B}<br>
+    W: S=${scores.wCount.S} T=${scores.wCount.T} A=${scores.wCount.A} B=${scores.wCount.B}<br>
+    D: S=${scores.diff.S} T=${scores.diff.T} A=${scores.diff.A} B=${scores.diff.B}
   `;
 
   setTimeout(() => {
@@ -1283,6 +1606,7 @@ function renderCoachResults(decoded) {
 
 function renderBars(containerId, profile) {
   const c = document.getElementById(containerId);
+  const STAB_NAMES = t().stabNames;
   c.innerHTML = '';
   ['S','T','A','B'].forEach(dim => {
     const val = profile[dim];
@@ -1302,6 +1626,8 @@ function renderBars(containerId, profile) {
 
 function renderInterpretations(profile) {
   const c = document.getElementById('interpCards');
+  const l = t();
+  const STAB_NAMES = l.stabNames;
   c.innerHTML = '';
   const sorted = ['S','T','A','B'].sort((a,b) => profile[b]-profile[a]);
   sorted.forEach(dim => {
@@ -1316,18 +1642,18 @@ function renderInterpretations(profile) {
         <div class="interp-badge" style="background:${STAB_COLORS[dim]};font-size:0.7rem;padding:0.4rem 0.6rem">${STAB_NAMES[dim]}</div>
         <div class="interp-info">
           <h4>${STAB_NAMES[dim]}</h4>
-          <span>${isHigh ? 'Hoher Wert – ausgeprägt' : isLow ? 'Tiefer Wert – schwach ausgeprägt' : 'Mittlerer Bereich'}</span>
+          <span>${isHigh ? l.interpHigh : isLow ? l.interpLow : l.interpMid}</span>
         </div>
         <div class="interp-score-badge" style="background:${STAB_COLORS[dim]}">${val}</div>
       </div>
       <div class="interp-body ${isHigh || isLow ? 'open' : ''}">
         ${isHigh ? `<div class="interp-block"><h5 style="color:${STAB_COLORS[dim]}">${interp.high.title}</h5><p>${interp.high.text}</p></div>` : ''}
         ${isLow ? `<div class="interp-block"><h5 style="color:${STAB_COLORS[dim]}">${interp.low.title}</h5><p>${interp.low.text}</p></div>` : ''}
-        ${!isHigh && !isLow ? `<div class="interp-block"><h5 style="color:${STAB_COLORS[dim]}">Mittlerer Bereich (41–59)</h5><p>Keine ausgeprägte Tendenz – Merkmale beider Pole können situativ auftreten.</p></div>` : ''}
+        ${!isHigh && !isLow ? `<div class="interp-block"><h5 style="color:${STAB_COLORS[dim]}">${l.interpMid} (41–59)</h5><p>${l.interpMidText}</p></div>` : ''}
         <div class="interp-block">
-          <h5 style="color:${STAB_COLORS[dim]}">Beide Pole zur Referenz</h5>
-          <p><strong>Hohe Werte:</strong> ${interp.high.text}</p>
-          <p style="margin-top:0.6rem"><strong>Tiefe Werte:</strong> ${interp.low.text}</p>
+          <h5 style="color:${STAB_COLORS[dim]}">${l.interpBothPoles}</h5>
+          <p><strong>${l.interpHighLabel}</strong> ${interp.high.text}</p>
+          <p style="margin-top:0.6rem"><strong>${l.interpLowLabel}</strong> ${interp.low.text}</p>
         </div>
       </div>
     `;
@@ -1362,15 +1688,17 @@ function toggleWordList() {
   const mWords = _lastAnswers.mWords || [];
   const wWords = _lastAnswers.wWords || [];
 
+  const l = t();
+  const wl = I18N[_lastAnswers.lang || LANG];
   el.innerHTML = `
-    <h4>Gewählte Wörter</h4>
+    <h4>${l.wordListTitle}</h4>
     <div class="word-list-cols">
       <div>
-        <div class="word-col-title">M — Passt am meisten (${mWords.length})</div>
+        <div class="word-col-title">${wl.wordMost(mWords.length)}</div>
         ${mWords.map(w => `<span class="word-pill">${w}</span>`).join('')}
       </div>
       <div>
-        <div class="word-col-title">W — Passt am wenigsten (${wWords.length})</div>
+        <div class="word-col-title">${wl.wordLeast(wWords.length)}</div>
         ${wWords.map(w => `<span class="word-pill">${w}</span>`).join('')}
       </div>
     </div>
@@ -1380,43 +1708,93 @@ function toggleWordList() {
 
 // ── PNG EXPORT ───────────────────────────────────────────────────────────────
 
-function exportPNG() {
-  // Expand all interpretation cards before capture
-  document.querySelectorAll('.interp-body').forEach(el => el.classList.add('open'));
-
-  const doCapture = () => {
-    // Hide UI-only elements
-    const toHide = [
-      document.querySelector('.coach-actions'),
-      document.getElementById('wordList'),
-      document.querySelector('.raw-toggle'),
-      document.getElementById('rawData'),
-      document.querySelector('.btn-reset'),
-    ];
-    toHide.forEach(el => { if(el) el.dataset.hidden = el.style.display; if(el) el.style.display = 'none'; });
-
-    const el = document.getElementById('results');
-    html2canvas(el, { scale: 2, backgroundColor: '#FAF8F4', useCORS: true, logging: false }).then(canvas => {
-      toHide.forEach(el => { if(el) el.style.display = el.dataset.hidden || ''; });
-      const link = document.createElement('a');
-      const name = document.getElementById('resultName').textContent || 'auswertung';
-      link.download = `persoenlichkeits-cockpit-${name}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    });
-  };
-
-  if (window.html2canvas) {
-    doCapture();
-  } else {
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-    script.onload = doCapture;
-    document.head.appendChild(script);
-  }
+function loadHtml2Canvas(cb) {
+  if (window.html2canvas) { cb(); return; }
+  const s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+  s.onload = cb;
+  document.head.appendChild(s);
 }
 
-// ── INIT ─────────────────────────────────────────────────────────────────────
+function captureElement(id, filename) {
+  loadHtml2Canvas(() => {
+    const el = document.getElementById(id);
+    // Animate bars to full width before capture
+    el.querySelectorAll('.stab-bar-fill').forEach(b => b.style.width = b.dataset.pct + '%');
+    setTimeout(() => {
+      html2canvas(el, { scale: 2, backgroundColor: '#FAF8F4', useCORS: true, logging: false }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+    }, 200);
+  });
+}
+
+function exportProfiles() {
+  const name = document.getElementById('resultName').textContent || 'auswertung';
+  captureElement('exportProfiles', `profil-${name}.png`);
+}
+
+function exportInterpretation() {
+  // Expand all interp cards first
+  document.querySelectorAll('.interp-body').forEach(el => el.classList.add('open'));
+  const name = document.getElementById('resultName').textContent || 'auswertung';
+  captureElement('exportInterp', `interpretation-${name}.png`);
+}
+
+function renderCoachResultsInLang(decoded) {
+  // Re-render coach view in current LANG without resetting to DE
+  const { scores, name, date, gender, lang } = decoded;
+  const coacheeLang = lang || 'de';
+  const l = t();
+  _lastAnswers = { mWords: scores._mWords || [], wWords: scores._wWords || [], lang: coacheeLang };
+
+  const genderLabel = l.genderLabel(gender);
+  document.getElementById('resultName').textContent = name || l.interpTitle;
+  document.getElementById('resultMeta').textContent = `${genderLabel} · ${date} · ${l.metaSuffix}`;
+
+  const STAB_NAMES = l.stabNames;
+  const dominant = Object.entries(scores.profM).sort((a,b) => b[1]-a[1])[0][0];
+  document.getElementById('dominantBanner').innerHTML = `
+    <div class="dominant-letter" style="font-size:1rem;padding:1rem 1.2rem">${STAB_NAMES[dominant]}</div>
+    <div class="dominant-text">
+      <h3>${l.dominant}: ${STAB_NAMES[dominant]}</h3>
+      <p>${l.highestNorm}: ${scores.profM[dominant]} ${l.points}</p>
+    </div>
+  `;
+  document.querySelector('#profileM h3').innerHTML = `${l.profileMTitle} <span class="profile-hint">${l.profileMHint}</span>`;
+  document.querySelector('#profileM .profile-desc').textContent = l.profileMDesc;
+  document.querySelector('#profileW h3').innerHTML = `${l.profileWTitle} <span class="profile-hint">${l.profileWHint}</span>`;
+  document.querySelector('#profileW .profile-desc').textContent = l.profileWDesc;
+  document.querySelector('#profileD h3').innerHTML = `${l.profileDTitle} <span class="profile-hint">${l.profileDHint}</span>`;
+  document.querySelector('#profileD .profile-desc').innerHTML = `${l.profileDDesc} <strong>${l.profileDStrong}</strong>`;
+  document.querySelector('#exportInterp .interp-title').textContent = l.interpTitle;
+  document.querySelector('.raw-toggle').textContent = l.rawToggle;
+  document.querySelector('.btn-reset').textContent = l.resetBtn;
+  const btns = document.querySelectorAll('.coach-btn');
+  if (btns[0]) btns[0].textContent = l.btnWords;
+  if (btns[1]) btns[1].textContent = l.btnProfile;
+  if (btns[2]) btns[2].textContent = l.btnInterp;
+
+  renderBars('barsM', scores.profM);
+  renderBars('barsW', scores.profW);
+  renderBars('barsD', scores.profD);
+  renderInterpretations(scores.profD);
+
+  // Close word list if open so it re-renders in new lang on next click
+  document.getElementById('wordList').style.display = 'none';
+
+  setTimeout(() => {
+    document.querySelectorAll('.stab-bar-fill').forEach(el => {
+      el.style.width = el.dataset.pct + '%';
+    });
+  }, 100);
+}
+
+
+applyTranslations();
 renderQuestions();
 checkCoachUrl();
 </script>
