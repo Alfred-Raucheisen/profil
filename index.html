@@ -796,8 +796,8 @@
     <div class="conf-card">
       <div class="conf-icon">✓</div>
       <h2 id="conf-name">Vielen Dank!</h2>
-      <p>Ihre Antworten wurden erfasst. Ihr Coach wird die Auswertung im nächsten Meeting mit Ihnen besprechen.</p>
-      <p class="conf-sub">Sie können dieses Fenster schliessen.</p>
+      <p id="conf-text">Ihre Antworten wurden erfasst. Ihr Coach wird die Auswertung im nächsten Meeting mit Ihnen besprechen.</p>
+      <p class="conf-sub" id="conf-close">Sie können dieses Fenster schliessen.</p>
     </div>
     <div id="conf-sending" class="conf-status sending">⏳ Auswertung wird übermittelt…</div>
   </div>
@@ -1526,9 +1526,10 @@ function showCoacheeConfirmation(name, coachUrl, mWords, wWords) {
   conf.style.display = 'block';
   const l = t();
   document.getElementById('conf-name').textContent = name ? `${l.thankYou.replace('!','')} ${name}!` : l.thankYou;
-  // Update confirmation texts in current language
-  conf.querySelector('p').textContent = l.confText;
-  conf.querySelector('.conf-sub').textContent = l.confClose;
+  document.getElementById('conf-text').textContent = l.confText;
+  document.getElementById('conf-close').textContent = l.confClose;
+  document.getElementById('conf-sending').textContent = l.sending;
+  document.getElementById('conf-sending').className = 'conf-status sending';
   window.scrollTo({top: 0, behavior: 'smooth'});
 
   // Send coach URL via EmailJS, include word list in email body
@@ -1541,7 +1542,6 @@ function showCoacheeConfirmation(name, coachUrl, mWords, wWords) {
     date: date,
     coach_url: coachUrl + wordSummary
   }).then(() => {
-    const el = document.getElementById('conf-sending');
     const el = document.getElementById('conf-sending');
     el.textContent = t().sent;
     el.className = 'conf-status success';
@@ -1561,6 +1561,8 @@ function renderCoachResults(decoded) {
   const coacheeLang = lang || 'de';
   const l = t();
   _lastAnswers = { mWords: scores._mWords || [], wWords: scores._wWords || [], lang: coacheeLang };
+  document.getElementById('form-section').style.display = 'none';
+  document.getElementById('confirmation').style.display = 'none';
   document.getElementById('results').style.display = 'block';
   window.scrollTo({top: 0, behavior: 'smooth'});
 
