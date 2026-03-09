@@ -1381,18 +1381,39 @@ function toggleWordList() {
 // ── PNG EXPORT ───────────────────────────────────────────────────────────────
 
 function exportPNG() {
-  const script = document.createElement('script');
-  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-  script.onload = () => {
+  // Expand all interpretation cards before capture
+  document.querySelectorAll('.interp-body').forEach(el => el.classList.add('open'));
+
+  const doCapture = () => {
+    // Hide UI-only elements
+    const toHide = [
+      document.querySelector('.coach-actions'),
+      document.getElementById('wordList'),
+      document.querySelector('.raw-toggle'),
+      document.getElementById('rawData'),
+      document.querySelector('.btn-reset'),
+    ];
+    toHide.forEach(el => { if(el) el.dataset.hidden = el.style.display; if(el) el.style.display = 'none'; });
+
     const el = document.getElementById('results');
-    html2canvas(el, { scale: 2, backgroundColor: '#FAF8F4' }).then(canvas => {
+    html2canvas(el, { scale: 2, backgroundColor: '#FAF8F4', useCORS: true, logging: false }).then(canvas => {
+      toHide.forEach(el => { if(el) el.style.display = el.dataset.hidden || ''; });
       const link = document.createElement('a');
-      link.download = `persoenlichkeits-cockpit-${document.getElementById('resultName').textContent}.png`;
+      const name = document.getElementById('resultName').textContent || 'auswertung';
+      link.download = `persoenlichkeits-cockpit-${name}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
     });
   };
-  document.head.appendChild(script);
+
+  if (window.html2canvas) {
+    doCapture();
+  } else {
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    script.onload = doCapture;
+    document.head.appendChild(script);
+  }
 }
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
