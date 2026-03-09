@@ -629,6 +629,77 @@
     color: var(--muted);
   }
 
+  /* CONFIRMATION STATUS */
+  .conf-status {
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 1.2rem;
+    border-radius: 10px;
+    margin-top: 1rem;
+  }
+  .conf-status.sending { background: var(--light); color: var(--muted); }
+  .conf-status.success { background: #e8f5e9; color: #1E6B3C; font-size: 1.1rem; }
+  .conf-status.error   { background: #fdecea; color: #c0392b; font-size: 1rem; border: 1px solid #f5c6cb; }
+
+  /* COACH ACTION BUTTONS */
+  .coach-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+  }
+  .coach-btn {
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    padding: 0.8rem 1.4rem;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .coach-btn:hover { opacity: 0.85; }
+
+  /* WORD LIST */
+  .word-list-section {
+    background: var(--light);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .word-list-section h4 {
+    font-family: 'Playfair Display', serif;
+    color: var(--navy);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+  .word-list-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  .word-col-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
+  }
+  .word-pill {
+    display: inline-block;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.82rem;
+    margin: 0.2rem;
+    color: var(--navy);
+  }
+
   @media (max-width: 600px) {
     .column-labels, .word-row {
       grid-template-columns: 1fr 60px 60px;
@@ -700,7 +771,7 @@
       <p>Ihre Antworten wurden erfasst. Ihr Coach wird die Auswertung im nächsten Meeting mit Ihnen besprechen.</p>
       <p class="conf-sub">Sie können dieses Fenster schliessen.</p>
     </div>
-    <div id="conf-sending" style="text-align:center;color:var(--muted);font-size:0.85rem;padding:1rem">Auswertung wird übermittelt…</div>
+    <div id="conf-sending" class="conf-status sending">⏳ Auswertung wird übermittelt…</div>
   </div>
 
   <!-- RESULTS -->
@@ -740,6 +811,12 @@
 
     <span class="raw-toggle" onclick="toggleRaw()">Rohdaten anzeigen</span>
     <div class="raw-data" id="rawData"></div>
+
+    <div class="coach-actions">
+      <button class="coach-btn" onclick="toggleWordList()">📋 Gewählte Wörter anzeigen</button>
+      <button class="coach-btn" onclick="exportPNG()">🖼 Als Bild exportieren</button>
+    </div>
+    <div id="wordList" style="display:none" class="word-list-section"></div>
   </div>
 
 </div>
@@ -1032,6 +1109,7 @@ function computeScores() {
   // Count M and W selections per STAB dimension across all 24 groups
   const mCount = {S:0, T:0, A:0, B:0};
   const wCount = {S:0, T:0, A:0, B:0};
+  const mWords = [], wWords = [];
 
   for (let gi = 0; gi < 24; gi++) {
     const mVal = parseInt(document.querySelector(`input[name="M-${gi}"]:checked`)?.value);
@@ -1039,12 +1117,14 @@ function computeScores() {
     const grp = GROUPS[gi];
 
     if (!isNaN(mVal)) {
-      const stab = grp.rows[mVal][3 + grp.col]; // col-specific STAB assignment
+      const stab = grp.rows[mVal][3 + grp.col];
       mCount[stab]++;
+      mWords.push(grp.rows[mVal][grp.col]);
     }
     if (!isNaN(wVal)) {
-      const stab = grp.rows[wVal][3 + grp.col]; // col-specific STAB assignment
+      const stab = grp.rows[wVal][3 + grp.col];
       wCount[stab]++;
+      wWords.push(grp.rows[wVal][grp.col]);
     }
   }
 
@@ -1078,7 +1158,7 @@ function computeScores() {
     B: lookup(table, diff.B, 11),
   };
 
-  return { mCount, wCount, diff, profM, profW, profD };
+  return { mCount, wCount, diff, profM, profW, profD, _mWords: mWords, _wWords: wWords };
 }
 
 // ── URL MODE DETECTION ───────────────────────────────────────────────────────
@@ -1122,7 +1202,9 @@ function submitTest() {
   const date   = document.getElementById('dateInput').value || '';
   const gender = document.getElementById('genderInput').value || 'm';
 
-  // Build coach URL with all data encoded
+  // Store raw counts for word list (collect actual words)
+  _lastAnswers = { mWords: scores._mWords, wWords: scores._wWords };
+
   const payload = btoa(JSON.stringify({ scores, name, date, gender }));
   const coachUrl = `${location.origin}${location.pathname}?coach=${payload}`;
 
@@ -1147,9 +1229,13 @@ function showCoacheeConfirmation(name, coachUrl) {
     date: date,
     coach_url: coachUrl
   }).then(() => {
-    document.getElementById('conf-sending').textContent = '✓ Auswertung wurde an den Coach übermittelt.';
+    const el = document.getElementById('conf-sending');
+    el.textContent = '✓ Auswertung wurde an den Coach übermittelt.';
+    el.className = 'conf-status success';
   }).catch(() => {
-    document.getElementById('conf-sending').textContent = 'Hinweis: Übermittlung fehlgeschlagen. Bitte Coach informieren.';
+    const el = document.getElementById('conf-sending');
+    el.textContent = '⚠️ Übermittlung fehlgeschlagen — bitte Coach direkt informieren.';
+    el.className = 'conf-status error';
   });
 }
 
@@ -1157,6 +1243,7 @@ function showCoacheeConfirmation(name, coachUrl) {
 
 function renderCoachResults(decoded) {
   const { scores, name, date, gender } = decoded;
+  _lastAnswers = { mWords: scores._mWords || [], wWords: scores._wWords || [] };
   document.getElementById('results').style.display = 'block';
   window.scrollTo({top: 0, behavior: 'smooth'});
 
@@ -1261,6 +1348,51 @@ function resetTest() {
   document.getElementById('results').style.display = 'none';
   document.getElementById('form-section').style.display = 'block';
   window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// ── WORD LIST ────────────────────────────────────────────────────────────────
+
+let _lastAnswers = null; // store answers for word list
+
+function toggleWordList() {
+  const el = document.getElementById('wordList');
+  if (el.style.display === 'block') { el.style.display = 'none'; return; }
+  if (!_lastAnswers) { el.innerHTML = '<p style="color:var(--muted)">Keine Wortdaten verfügbar.</p>'; el.style.display = 'block'; return; }
+
+  const mWords = _lastAnswers.mWords || [];
+  const wWords = _lastAnswers.wWords || [];
+
+  el.innerHTML = `
+    <h4>Gewählte Wörter</h4>
+    <div class="word-list-cols">
+      <div>
+        <div class="word-col-title">M — Passt am meisten (${mWords.length})</div>
+        ${mWords.map(w => `<span class="word-pill">${w}</span>`).join('')}
+      </div>
+      <div>
+        <div class="word-col-title">W — Passt am wenigsten (${wWords.length})</div>
+        ${wWords.map(w => `<span class="word-pill">${w}</span>`).join('')}
+      </div>
+    </div>
+  `;
+  el.style.display = 'block';
+}
+
+// ── PNG EXPORT ───────────────────────────────────────────────────────────────
+
+function exportPNG() {
+  const script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+  script.onload = () => {
+    const el = document.getElementById('results');
+    html2canvas(el, { scale: 2, backgroundColor: '#FAF8F4' }).then(canvas => {
+      const link = document.createElement('a');
+      link.download = `persoenlichkeits-cockpit-${document.getElementById('resultName').textContent}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  };
+  document.head.appendChild(script);
 }
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
