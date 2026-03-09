@@ -1,0 +1,1812 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Persönlichkeits-Cockpit</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2744;
+    --blue: #2E75B6;
+    --gold: #C8A84B;
+    --cream: #FAF8F4;
+    --light: #EEF3FA;
+    --border: #D4DDF0;
+    --text: #1a2744;
+    --muted: #6b7a99;
+    --s-color: #2E75B6;
+    --t-color: #1E6B3C;
+    --a-color: #C0392B;
+    --b-color: #8E44AD;
+    --s-light: #EEF3FA;
+    --t-light: #EAF4EE;
+    --a-light: #FDECEA;
+    --b-light: #F5EEF8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--navy);
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(200,168,75,0.12);
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: -40px;
+    width: 150px; height: 150px;
+    border-radius: 50%;
+    background: rgba(46,117,182,0.15);
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    color: #fff;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.4rem;
+    position: relative; z-index: 1;
+  }
+  .header p {
+    color: rgba(255,255,255,0.65);
+    font-size: 0.9rem;
+    font-weight: 300;
+    position: relative; z-index: 1;
+  }
+  .gold-line {
+    width: 60px; height: 3px;
+    background: var(--gold);
+    margin: 1rem auto 0;
+    position: relative; z-index: 1;
+  }
+
+  /* CONTAINER */
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* SETUP CARD */
+  .setup-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border);
+    display: flex;
+    gap: 2rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .setup-card .field {
+    flex: 1; min-width: 180px;
+  }
+  .setup-card label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+  .setup-card input, .setup-card select {
+    width: 100%;
+    padding: 0.65rem 0.9rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text);
+    background: var(--cream);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .setup-card input:focus, .setup-card select:focus {
+    border-color: var(--blue);
+  }
+
+  /* INSTRUCTIONS */
+  .instructions {
+    background: var(--light);
+    border-left: 4px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+  .instructions strong { color: var(--text); }
+
+  /* PROGRESS */
+  .progress-bar-wrap {
+    background: var(--border);
+    border-radius: 99px;
+    height: 6px;
+    margin-bottom: 0.4rem;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--gold));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .progress-label {
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-align: right;
+    margin-bottom: 1.5rem;
+  }
+
+  /* QUESTION GROUPS */
+  .phase-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 2.5rem 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .phase-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .question-group {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .question-group.complete {
+    border-color: #b8d4b0;
+    background: #fafffe;
+  }
+  .question-group.error {
+    border-color: #f0a8a0;
+    background: #fff8f7;
+  }
+
+  .group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  .group-num {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .group-status {
+    font-size: 0.72rem;
+    color: var(--muted);
+    transition: color 0.2s;
+  }
+  .question-group.complete .group-status { color: #1E6B3C; font-weight: 600; }
+  .question-group.error .group-status { color: #C0392B; font-weight: 600; }
+
+  .column-labels {
+    display: grid;
+    grid-template-columns: 1fr 80px 80px;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding: 0 0.2rem;
+  }
+  .col-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: center;
+  }
+  .col-label:first-child { text-align: left; }
+
+  .word-row {
+    display: grid;
+    grid-template-columns: 1fr 80px 80px;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.35rem 0.2rem;
+    border-radius: 6px;
+    transition: background 0.15s;
+  }
+  .word-row:hover { background: var(--cream); }
+
+  .word-label {
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .stab-tag {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 1px 5px;
+    border-radius: 3px;
+    opacity: 0;
+  }
+
+  .radio-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Custom radio */
+  .radio-wrap {
+    position: relative;
+    width: 26px; height: 26px;
+    cursor: pointer;
+  }
+  .radio-wrap input[type=radio] {
+    position: absolute;
+    opacity: 0;
+    width: 100%; height: 100%;
+    cursor: pointer;
+    margin: 0;
+  }
+  .radio-custom {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    pointer-events: none;
+  }
+  .radio-custom::after {
+    content: '';
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: transparent;
+    transition: all 0.15s;
+  }
+
+  /* M = Most = blue */
+  .radio-wrap.m input:checked ~ .radio-custom {
+    border-color: var(--blue);
+    background: var(--blue);
+  }
+  .radio-wrap.m input:checked ~ .radio-custom::after {
+    background: #fff;
+  }
+  .radio-wrap.m:hover .radio-custom {
+    border-color: var(--blue);
+  }
+
+  /* W = Least = gold */
+  .radio-wrap.w input:checked ~ .radio-custom {
+    border-color: var(--gold);
+    background: var(--gold);
+  }
+  .radio-wrap.w input:checked ~ .radio-custom::after {
+    background: #fff;
+  }
+  .radio-wrap.w:hover .radio-custom {
+    border-color: var(--gold);
+  }
+
+  /* SUBMIT */
+  .submit-area {
+    margin-top: 3rem;
+    text-align: center;
+  }
+  .btn-submit {
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    padding: 1rem 3rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-submit:hover { background: var(--blue); transform: translateY(-1px); }
+  .btn-submit:active { transform: translateY(0); }
+  .error-msg {
+    color: #C0392B;
+    font-size: 0.85rem;
+    margin-top: 0.8rem;
+    display: none;
+  }
+
+  /* RESULTS */
+  #results { display: none; }
+
+  .result-header {
+    background: var(--navy);
+    border-radius: 12px;
+    padding: 2rem;
+    color: #fff;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .result-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+  }
+  .result-header p { color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-top: 0.3rem; }
+  .btn-reset {
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.25);
+    padding: 0.6rem 1.4rem;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-reset:hover { background: rgba(255,255,255,0.2); }
+
+  /* THREE PROFILES */
+  .profiles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.2rem;
+    margin-bottom: 2rem;
+  }
+  .profile-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .profile-card h3 {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+  .profile-hint {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.68rem;
+  }
+  .profile-desc {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    font-style: italic;
+  }
+  .profile-card--highlight {
+    border-color: var(--gold);
+    background: #fffdf5;
+  }
+  .profile-card--highlight h3 {
+    color: #9c7a0a;
+  }
+
+  .stab-bar-group { margin-bottom: 1rem; }
+  .stab-bar-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.3rem;
+    font-size: 0.82rem;
+  }
+  .stab-name { font-weight: 600; }
+  .stab-score { color: var(--muted); }
+  .stab-bar-track {
+    height: 8px;
+    background: var(--light);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .stab-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 1s cubic-bezier(0.4,0,0.2,1);
+    width: 0;
+  }
+  .s-bar { background: var(--s-color); }
+  .t-bar { background: var(--t-color); }
+  .a-bar { background: var(--a-color); }
+  .b-bar { background: var(--b-color); }
+
+  /* INTERPRETATION */
+  .interpretation-section {
+    margin-top: 2rem;
+  }
+  .interp-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--navy);
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .interp-card {
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+  }
+  .interp-head {
+    padding: 0.9rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    cursor: pointer;
+    user-select: none;
+  }
+  .interp-badge {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .interp-info { flex: 1; }
+  .interp-info h4 { font-size: 0.95rem; font-weight: 600; }
+  .interp-info span { font-size: 0.78rem; color: var(--muted); }
+  .interp-score-badge {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    color: #fff;
+  }
+  .interp-body {
+    padding: 0 1.2rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s;
+    background: #fff;
+  }
+  .interp-body.open {
+    max-height: 600px;
+    padding: 1rem 1.2rem 1.2rem;
+  }
+  .interp-block { margin-bottom: 1rem; }
+  .interp-block h5 {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .interp-block p {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: #444;
+  }
+
+  /* DOMINANT TYPE */
+  .dominant-banner {
+    background: linear-gradient(135deg, var(--navy) 0%, #2a4080 100%);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    color: #fff;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .dominant-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--gold);
+  }
+  .dominant-text h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+  }
+  .dominant-text p {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.5;
+  }
+
+  /* RAW DATA */
+  /* CONFIRMATION PAGE */
+  .conf-card {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 3rem 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .conf-icon {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: #e8f5e9;
+    color: #1E6B3C;
+    font-size: 1.8rem;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+  }
+  .conf-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--navy);
+    margin-bottom: 0.8rem;
+  }
+  .conf-card p { color: var(--muted); font-size: 0.95rem; line-height: 1.6; max-width: 400px; margin: 0 auto 0.5rem; }
+  .conf-sub { font-size: 0.82rem !important; margin-top: 1rem !important; }
+  .coach-section {
+    background: var(--navy);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+  }
+  .coach-section-label {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 0.6rem;
+  }
+  .url-row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+  .url-row input {
+    flex: 1; min-width: 0; padding: 0.6rem 0.8rem; border-radius: 6px;
+    border: none; background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8);
+    font-family: monospace; font-size: 0.72rem; outline: none;
+  }
+  .url-row button {
+    background: var(--gold); color: var(--navy); border: none;
+    padding: 0.6rem 1.2rem; border-radius: 6px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 700;
+    cursor: pointer; white-space: nowrap; transition: opacity 0.2s;
+  }
+  .url-row button:hover { opacity: 0.85; }
+
+  .raw-toggle {
+    font-size: 0.78rem;
+    color: var(--muted);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    margin-top: 1.5rem;
+    display: inline-block;
+  }
+  .raw-data {
+    display: none;
+    background: var(--light);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    font-family: monospace;
+    font-size: 0.78rem;
+    line-height: 1.8;
+    color: var(--muted);
+  }
+
+  /* CONFIRMATION STATUS */
+  .conf-status {
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 1.2rem;
+    border-radius: 10px;
+    margin-top: 1rem;
+  }
+  .conf-status.sending { background: var(--light); color: var(--muted); }
+  .conf-status.success { background: #e8f5e9; color: #1E6B3C; font-size: 1.1rem; }
+  .conf-status.error   { background: #fdecea; color: #c0392b; font-size: 1rem; border: 1px solid #f5c6cb; }
+
+  /* COACH ACTION BUTTONS */
+  .coach-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+  }
+  .coach-btn {
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    padding: 0.8rem 1.4rem;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .coach-btn:hover { opacity: 0.85; }
+
+  /* WORD LIST */
+  .word-list-section {
+    background: var(--light);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .word-list-section h4 {
+    font-family: 'Playfair Display', serif;
+    color: var(--navy);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+  .word-list-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  .word-col-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
+  }
+  .word-pill {
+    display: inline-block;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.82rem;
+    margin: 0.2rem;
+    color: var(--navy);
+  }
+
+  /* LANGUAGE SWITCHER */
+  .lang-switcher {
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.8rem 0 0.2rem;
+  }
+  .lang-btn {
+    background: rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 6px;
+    padding: 0.3rem 0.8rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+  .lang-btn:hover { background: rgba(255,255,255,0.2); }
+  .lang-btn.active { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+
+  @media (max-width: 600px) {
+    .column-labels, .word-row {
+      grid-template-columns: 1fr 60px 60px;
+      gap: 0.3rem;
+    }
+    .col-label { font-size: 0.62rem; }
+    .word-label { font-size: 0.85rem; }
+  }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init({publicKey: 'X5DcsZZxy0M4C--XH', privateKey: 'jAZVBAt4CR_Yitl2oKVw4'});</script>
+</head>
+<body>
+
+<div class="header">
+  <h1 id="hTitle">Persönlichkeits-Cockpit</h1>
+  <p id="hSubtitle">Identität, Verhalten und Wirkung</p>
+  <div class="gold-line"></div>
+  <div class="lang-switcher">
+    <button class="lang-btn active" onclick="setLang('de')">DE</button>
+    <button class="lang-btn" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('fr')">FR</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- FORM -->
+  <div id="form-section">
+
+    <div class="setup-card">
+      <div class="field">
+        <label id="lName">Name</label>
+        <input type="text" id="nameInput" placeholder="Ihr Name">
+      </div>
+      <div class="field">
+        <label id="lDate">Datum</label>
+        <input type="date" id="dateInput">
+      </div>
+      <div class="field">
+        <label id="lGender">Geschlecht</label>
+        <select id="genderInput">
+          <option value="" id="gPleaseSelect">Bitte wählen</option>
+          <option value="m" id="gMale">Männlich</option>
+          <option value="w" id="gFemale">Weiblich</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="instructions" id="instructionsText">
+      <strong>Anleitung:</strong> Wählen Sie in jeder Gruppe von vier Begriffen den Begriff,
+      der <strong style="color:var(--blue)">am meisten (M)</strong> auf Sie zutrifft, und den Begriff,
+      der <strong style="color:#9c7a0a">am wenigsten (W)</strong> auf Sie zutrifft.
+      Bearbeiten Sie die Felder zügig und hören Sie auf Ihre Intuition. Dauer: ca. 10 Minuten.
+    </div>
+
+    <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="progress-label" id="progressLabel">0 von 24 Gruppen ausgefüllt</div>
+
+    <div id="questions-container"></div>
+
+    <div class="submit-area">
+      <button class="btn-submit" onclick="submitTest()">Auswerten →</button>
+      <div class="error-msg" id="errorMsg">Bitte füllen Sie alle Gruppen vollständig aus.</div>
+    </div>
+
+  </div>
+
+  <!-- CONFIRMATION (coachee sees this after submitting) -->
+  <div id="confirmation" style="display:none">
+    <div class="conf-card">
+      <div class="conf-icon">✓</div>
+      <h2 id="conf-name">Vielen Dank!</h2>
+      <p>Ihre Antworten wurden erfasst. Ihr Coach wird die Auswertung im nächsten Meeting mit Ihnen besprechen.</p>
+      <p class="conf-sub">Sie können dieses Fenster schliessen.</p>
+    </div>
+    <div id="conf-sending" class="conf-status sending">⏳ Auswertung wird übermittelt…</div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results" style="display:none">
+    <div class="result-header">
+      <div>
+        <h2 id="resultName">Ergebnis</h2>
+        <p id="resultMeta"></p>
+      </div>
+      <button class="btn-reset" onclick="resetTest()">← Neu ausfüllen</button>
+    </div>
+
+    <div id="exportProfiles">
+      <div class="dominant-banner" id="dominantBanner"></div>
+      <div class="profiles-grid">
+        <div class="profile-card" id="profileM">
+          <h3>Projiziertes Bild <span class="profile-hint">(M-Werte)</span></h3>
+          <p class="profile-desc">Wie Sie sich nach aussen zeigen möchten — Ihr bewusstes, sozial geprägtes Selbstbild.</p>
+          <div id="barsM"></div>
+        </div>
+        <div class="profile-card" id="profileW">
+          <h3>Inneres Selbst <span class="profile-hint">(W-Werte)</span></h3>
+          <p class="profile-desc">Wie Sie sich innerlich erleben — Ihr authentischeres, tieferes Persönlichkeitsprofil.</p>
+          <div id="barsW"></div>
+        </div>
+        <div class="profile-card profile-card--highlight" id="profileD">
+          <h3>Im Lichte der Umwelt <span class="profile-hint">(M−W)</span></h3>
+          <p class="profile-desc">Die Differenz zwischen Aussen- und Innenbild — zeigt Rollenanpassung und potenzielle innere Spannung. <strong>Basis der Coaching-Interpretation.</strong></p>
+          <div id="barsD"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="exportInterp">
+      <div class="interpretation-section">
+        <div class="interp-title">Interpretation Ihrer Werte</div>
+        <div id="interpCards"></div>
+      </div>
+    </div>
+
+    <span class="raw-toggle" onclick="toggleRaw()">Rohdaten anzeigen</span>
+    <div class="raw-data" id="rawData"></div>
+
+    <div class="coach-actions">
+      <button class="coach-btn" onclick="toggleWordList()">📋 Gewählte Wörter anzeigen</button>
+      <button class="coach-btn" onclick="exportProfiles()">📊 Profil exportieren</button>
+      <button class="coach-btn" onclick="exportInterpretation()">📄 Interpretation exportieren</button>
+    </div>
+    <div id="wordList" style="display:none" class="word-list-section"></div>
+  </div>
+
+</div>
+
+<script>
+// ── LANGUAGE / I18N ──────────────────────────────────────────────────────────
+
+let LANG = 'de';
+
+const I18N = {
+  de: {
+    title: 'Persönlichkeits-Cockpit',
+    subtitle: 'Identität, Verhalten und Wirkung',
+    lName: 'Name', lDate: 'Datum', lGender: 'Geschlecht',
+    gPleaseSelect: 'Bitte wählen', gMale: 'Männlich', gFemale: 'Weiblich',
+    namePlaceholder: 'Ihr Name',
+    instructions: '<strong>Anleitung:</strong> Wählen Sie in jeder Gruppe von vier Begriffen den Begriff, der <strong style="color:var(--blue)">am meisten (M)</strong> auf Sie zutrifft, und den Begriff, der <strong style="color:#9c7a0a">am wenigsten (W)</strong> auf Sie zutrifft. Bearbeiten Sie die Felder zügig und hören Sie auf Ihre Intuition. Dauer: ca. 10 Minuten.',
+    groupOf: (i,n) => `Gruppe ${i} von ${n}`,
+    notFilled: 'Noch nicht ausgefüllt',
+    colMost: 'M', colMostLabel: 'Meisten',
+    colLeast: 'W', colLeastLabel: 'Wenigsten',
+    progress: (d,t) => `${d} von ${t} Gruppen ausgefüllt`,
+    submitBtn: 'Auswerten →',
+    errorMsg: 'Bitte füllen Sie alle Gruppen vollständig aus.',
+    thankYou: 'Vielen Dank!',
+    confText: 'Ihre Antworten wurden erfasst. Ihr Coach wird die Auswertung im nächsten Meeting mit Ihnen besprechen.',
+    confClose: 'Sie können dieses Fenster schliessen.',
+    sending: '⏳ Auswertung wird übermittelt…',
+    sent: '✓ Auswertung wurde an den Coach übermittelt.',
+    sendError: '⚠️ Übermittlung fehlgeschlagen — bitte Coach direkt informieren.',
+    resetBtn: '← Neu ausfüllen',
+    dominant: 'Dominante Dimension',
+    highestNorm: 'Höchster normierter Wert im projizierten Bild',
+    profileMTitle: 'Projiziertes Bild', profileMHint: '(M-Werte)',
+    profileMDesc: 'Wie Sie sich nach aussen zeigen möchten — Ihr bewusstes, sozial geprägtes Selbstbild.',
+    profileWTitle: 'Inneres Selbst', profileWHint: '(W-Werte)',
+    profileWDesc: 'Wie Sie sich innerlich erleben — Ihr authentischeres, tieferes Persönlichkeitsprofil.',
+    profileDTitle: 'Im Lichte der Umwelt', profileDHint: '(M−W)',
+    profileDDesc: 'Die Differenz zwischen Aussen- und Innenbild — zeigt Rollenanpassung und potenzielle innere Spannung.',
+    profileDStrong: 'Basis der Coaching-Interpretation.',
+    interpTitle: 'Interpretation Ihrer Werte',
+    interpHigh: 'Hoher Wert – ausgeprägt',
+    interpLow: 'Tiefer Wert – schwach ausgeprägt',
+    interpMid: 'Mittlerer Bereich',
+    interpMidText: 'Keine ausgeprägte Tendenz – Merkmale beider Pole können situativ auftreten.',
+    interpBothPoles: 'Beide Pole zur Referenz',
+    interpHighLabel: 'Hohe Werte:', interpLowLabel: 'Tiefe Werte:',
+    rawToggle: 'Rohdaten anzeigen',
+    btnWords: '📋 Gewählte Wörter anzeigen',
+    btnProfile: '📊 Profil exportieren',
+    btnInterp: '📄 Interpretation exportieren',
+    wordListTitle: 'Gewählte Wörter',
+    wordMost: n => `M — Passt am meisten (${n})`,
+    wordLeast: n => `W — Passt am wenigsten (${n})`,
+    noWordData: 'Keine Wortdaten verfügbar.',
+    stabNames: { S: 'Sorgfalt', T: 'Geduld', A: 'Tatkraft', B: 'Begeisterung' },
+    genderLabel: g => g === 'w' ? 'Weiblich' : 'Männlich',
+    metaSuffix: 'Persönlichkeits-Cockpit',
+    points: 'Punkte',
+  },
+  en: {
+    title: 'Personality Cockpit',
+    subtitle: 'Identity, Behaviour and Impact',
+    lName: 'Name', lDate: 'Date', lGender: 'Gender',
+    gPleaseSelect: 'Please select', gMale: 'Male', gFemale: 'Female',
+    namePlaceholder: 'Your name',
+    instructions: '<strong>Instructions:</strong> In each group of four terms, choose the one that fits you <strong style="color:var(--blue)">most (M)</strong> and the one that fits you <strong style="color:#9c7a0a">least (W)</strong>. Work through quickly and trust your intuition. Duration: approx. 10 minutes.',
+    groupOf: (i,n) => `Group ${i} of ${n}`,
+    notFilled: 'Not yet completed',
+    colMost: 'M', colMostLabel: 'Most',
+    colLeast: 'L', colLeastLabel: 'Least',
+    progress: (d,t) => `${d} of ${t} groups completed`,
+    submitBtn: 'Evaluate →',
+    errorMsg: 'Please complete all groups.',
+    thankYou: 'Thank you!',
+    confText: 'Your answers have been recorded. Your coach will discuss the results with you in your next meeting.',
+    confClose: 'You may close this window.',
+    sending: '⏳ Sending results…',
+    sent: '✓ Results sent to coach.',
+    sendError: '⚠️ Sending failed — please inform your coach directly.',
+    resetBtn: '← Start over',
+    dominant: 'Dominant Dimension',
+    highestNorm: 'Highest normalised score in projected image',
+    profileMTitle: 'Projected Image', profileMHint: '(M-values)',
+    profileMDesc: 'How you wish to present yourself — your conscious, socially shaped self-image.',
+    profileWTitle: 'Inner Self', profileWHint: '(W-values)',
+    profileWDesc: 'How you experience yourself inwardly — your more authentic, deeper personality profile.',
+    profileDTitle: 'In the Light of the Environment', profileDHint: '(M−W)',
+    profileDDesc: 'The difference between outer and inner image — shows role adaptation and potential inner tension.',
+    profileDStrong: 'Basis for coaching interpretation.',
+    interpTitle: 'Interpretation of Your Scores',
+    interpHigh: 'High score – pronounced',
+    interpLow: 'Low score – weakly pronounced',
+    interpMid: 'Middle range',
+    interpMidText: 'No pronounced tendency – traits of both poles may appear situationally.',
+    interpBothPoles: 'Both poles for reference',
+    interpHighLabel: 'High scores:', interpLowLabel: 'Low scores:',
+    rawToggle: 'Show raw data',
+    btnWords: '📋 Show selected words',
+    btnProfile: '📊 Export profile',
+    btnInterp: '📄 Export interpretation',
+    wordListTitle: 'Selected Words',
+    wordMost: n => `M — Fits most (${n})`,
+    wordLeast: n => `L — Fits least (${n})`,
+    noWordData: 'No word data available.',
+    stabNames: { S: 'Conscientiousness', T: 'Steadiness', A: 'Dominance', B: 'Influence' },
+    genderLabel: g => g === 'w' ? 'Female' : 'Male',
+    metaSuffix: 'Personality Cockpit',
+    points: 'points',
+  },
+  fr: {
+    title: 'Cockpit de Personnalité',
+    subtitle: 'Identité, Comportement et Impact',
+    lName: 'Nom', lDate: 'Date', lGender: 'Sexe',
+    gPleaseSelect: 'Veuillez choisir', gMale: 'Masculin', gFemale: 'Féminin',
+    namePlaceholder: 'Votre nom',
+    instructions: '<strong>Instructions:</strong> Dans chaque groupe de quatre termes, choisissez celui qui vous correspond le <strong style="color:var(--blue)">mieux (M)</strong> et celui qui vous correspond le <strong style="color:#9c7a0a">moins (W)</strong>. Répondez rapidement en écoutant votre intuition. Durée: env. 10 minutes.',
+    groupOf: (i,n) => `Groupe ${i} sur ${n}`,
+    notFilled: 'Pas encore rempli',
+    colMost: 'M', colMostLabel: 'Le plus',
+    colLeast: 'W', colLeastLabel: 'Le moins',
+    progress: (d,t) => `${d} sur ${t} groupes remplis`,
+    submitBtn: 'Évaluer →',
+    errorMsg: 'Veuillez compléter tous les groupes.',
+    thankYou: 'Merci beaucoup!',
+    confText: 'Vos réponses ont été enregistrées. Votre coach discutera des résultats avec vous lors de votre prochaine séance.',
+    confClose: 'Vous pouvez fermer cette fenêtre.',
+    sending: '⏳ Envoi en cours…',
+    sent: '✓ Résultats envoyés au coach.',
+    sendError: '⚠️ Échec de l\'envoi — veuillez informer votre coach directement.',
+    resetBtn: '← Recommencer',
+    dominant: 'Dimension dominante',
+    highestNorm: 'Valeur normalisée la plus élevée dans l\'image projetée',
+    profileMTitle: 'Image projetée', profileMHint: '(valeurs M)',
+    profileMDesc: 'Comment vous souhaitez vous présenter — votre image de soi consciente et socialement façonnée.',
+    profileWTitle: 'Moi intérieur', profileWHint: '(valeurs W)',
+    profileWDesc: 'Comment vous vous vivez intérieurement — votre profil de personnalité plus authentique.',
+    profileDTitle: 'À la lumière de l\'environnement', profileDHint: '(M−W)',
+    profileDDesc: 'La différence entre image extérieure et intérieure — montre l\'adaptation au rôle et les tensions potentielles.',
+    profileDStrong: 'Base de l\'interprétation coaching.',
+    interpTitle: 'Interprétation de vos valeurs',
+    interpHigh: 'Valeur élevée – prononcée',
+    interpLow: 'Valeur faible – peu prononcée',
+    interpMid: 'Zone médiane',
+    interpMidText: 'Pas de tendance prononcée – les traits des deux pôles peuvent apparaître selon la situation.',
+    interpBothPoles: 'Les deux pôles pour référence',
+    interpHighLabel: 'Valeurs élevées:', interpLowLabel: 'Valeurs faibles:',
+    rawToggle: 'Afficher les données brutes',
+    btnWords: '📋 Afficher les mots choisis',
+    btnProfile: '📊 Exporter le profil',
+    btnInterp: '📄 Exporter l\'interprétation',
+    wordListTitle: 'Mots choisis',
+    wordMost: n => `M — Convient le mieux (${n})`,
+    wordLeast: n => `W — Convient le moins (${n})`,
+    noWordData: 'Aucune donnée de mots disponible.',
+    stabNames: { S: 'Rigueur', T: 'Patience', A: 'Dynamisme', B: 'Enthousiasme' },
+    genderLabel: g => g === 'w' ? 'Féminin' : 'Masculin',
+    metaSuffix: 'Cockpit de Personnalité',
+    points: 'points',
+  },
+};
+
+function t() { return I18N[LANG]; }
+
+function setLang(lang) {
+  LANG = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent === lang.toUpperCase()));
+  applyTranslations();
+  // If coach view is active, re-render results in new language
+  if (document.getElementById('results').style.display !== 'none') {
+    const params = new URLSearchParams(window.location.search);
+    const data = params.get('coach');
+    if (data && data !== 'true') {
+      try {
+        const decoded = JSON.parse(atob(data));
+        renderCoachResultsInLang(decoded);
+      } catch(e) {}
+    }
+  } else {
+    // Re-render questions with new words
+    const container = document.getElementById('questions-container');
+    if (container && container.children.length > 0) {
+      container.innerHTML = '';
+      renderQuestions();
+    }
+  }
+}
+
+function applyTranslations() {
+  const l = t();
+  document.getElementById('hTitle').textContent = l.title;
+  document.getElementById('hSubtitle').textContent = l.subtitle;
+  document.getElementById('lName').textContent = l.lName;
+  document.getElementById('lDate').textContent = l.lDate;
+  document.getElementById('lGender').textContent = l.lGender;
+  document.getElementById('nameInput').placeholder = l.namePlaceholder;
+  document.getElementById('gPleaseSelect').textContent = l.gPleaseSelect;
+  document.getElementById('gMale').textContent = l.gMale;
+  document.getElementById('gFemale').textContent = l.gFemale;
+  document.getElementById('instructionsText').innerHTML = l.instructions;
+  document.getElementById('errorMsg').textContent = l.errorMsg;
+  const submitBtn = document.querySelector('.btn-submit');
+  if (submitBtn) submitBtn.textContent = l.submitBtn;
+}
+
+// ── WORD ARRAYS ──────────────────────────────────────────────────────────────
+
+const WORDS_ALL = {
+  de: [
+    ['begeisterungsfähig','methodisch','selbstsicher','B','T','A'],
+    ['respektvoll','bereitwillig','zuverlässig','S','S','T'],
+    ['entschlossen','fröhlich','nachdenklich','A','B','S'],
+    ['aufrichtig','ungebunden','kollegial','T','A','B'],
+    ['beherzt','gesellig','harmonisch','A','B','T'],
+    ['anregend','rücksichtsvoll','diplomatisch','B','S','S'],
+    ['sympathisch','treuherzig','erfinderisch','T','T','A'],
+    ['kontrolliert','reaktionsschnell','lebensfroh','S','A','B'],
+    ['nachsichtig','direkt','energisch','T','A','A'],
+    ['streitbar','bewahrend','anziehend','A','T','B'],
+    ['attraktiv','überzeugend','genau','B','B','S'],
+    ['diszipliniert','duldsam','gelassen','S','S','T'],
+    ['vertrauend','ordentlich','empfindsam','B','S','S'],
+    ['beständig','treu','optimistisch','T','T','B'],
+    ['zupackend','grosszügig','tatkräftig','A','B','A'],
+    ['ernsthaft','wagemutig','wohlwollend','S','A','T'],
+    ['ausdauernd','unabhängig','phantasievoll','T','A','B'],
+    ['zugewandt','perfektionistisch','geduldig','B','S','T'],
+    ['risikofreudig','einsichtig','konzentriert','A','T','S'],
+    ['sorgfältig','bewegend','kraftvoll','S','B','A'],
+    ['nachgiebig','gewissenhaft','genügsam','S','S','T'],
+    ['gewinnend','gütig','unnachgiebig','B','T','A'],
+    ['ruhig','strebsam','fügsam','T','A','S'],
+    ['zielsicher','freundschaftlich','adrett','A','B','B'],
+    ['forsch','bedacht','bescheiden','A','T','S'],
+    ['präzise','gesprächig','wirkungsvoll','S','B','A'],
+    ['massvoll','sorgsam','liebenswert','T','S','B'],
+    ['reizend','unternehmenslustig','verlässlich','B','A','T'],
+    ['kontaktfreudig','verhalten','kultiviert','B','S','B'],
+    ['arbeitsam','bahnbrechend','wetteifernd','A','A','A'],
+    ['willig','zufrieden','zugänglich','T','T','S'],
+    ['besonnen','beliebt','konventionell','S','B','T'],
+  ],
+  en: [
+    ['enthusiastic','methodical','self-confident','B','T','A'],
+    ['respectful','eager','reliable','S','S','T'],
+    ['determined','cheerful','reflective','A','B','S'],
+    ['candid','uncommitted','cooperative','T','A','B'],
+    ['courageous','sociable','harmonious','A','B','T'],
+    ['stimulating','considerate','diplomatic','B','S','S'],
+    ['likeable','loyal','inventive','T','T','A'],
+    ['controlled','responsive','joyful','S','A','B'],
+    ['indulgent','direct','vigorous','T','A','A'],
+    ['assertive','conservative','attractive','A','T','B'],
+    ['appealing','convincing','precise','B','B','S'],
+    ['disciplined','tolerant','composed','S','S','T'],
+    ['trusting','orderly','sensitive','B','S','S'],
+    ['steady','faithful','optimistic','T','T','B'],
+    ['hands-on','generous','energetic','A','B','A'],
+    ['serious','bold','benevolent','S','A','T'],
+    ['persistent','independent','imaginative','T','A','B'],
+    ['engaged','perfectionist','patient','B','S','T'],
+    ['risk-taking','perceptive','focused','A','T','S'],
+    ['careful','touching','powerful','S','B','A'],
+    ['flexible','conscientious','modest','S','S','T'],
+    ['charming','kind','relentless','B','T','A'],
+    ['calm','ambitious','compliant','T','A','S'],
+    ['goal-oriented','friendly','dapper','A','B','B'],
+    ['upfront','prudent','humble','A','T','S'],
+    ['accurate','talkative','effective','S','B','A'],
+    ['measured','diligent','loveable','T','S','B'],
+    ['delightful','enterprising','dependable','B','A','T'],
+    ['outgoing','reserved','cultivated','B','S','B'],
+    ['hardworking','groundbreaking','competitive','A','A','A'],
+    ['willing','content','accessible','T','T','S'],
+    ['composed','popular','conventional','S','B','T'],
+  ],
+  fr: [
+    ['enthousiaste','méthodique','sûr(e) de soi','B','T','A'],
+    ['respectueux/euse','disposé(e)','fiable','S','S','T'],
+    ['déterminé(e)','enjoué(e)','réfléchi(e)','A','B','S'],
+    ['sincère','libre','collégial(e)','T','A','B'],
+    ['courageux/euse','sociable','harmonieux/euse','A','B','T'],
+    ['stimulant(e)','prévenant(e)','diplomatique','B','S','S'],
+    ['sympathique','loyal(e)','inventif/ive','T','T','A'],
+    ['maîtrisé(e)','réactif/ive','joyeux/euse','S','A','B'],
+    ['indulgent(e)','direct(e)','énergique','T','A','A'],
+    ['combatif/ive','préservateur/trice','attrayant(e)','A','T','B'],
+    ['séduisant(e)','convaincant(e)','précis(e)','B','B','S'],
+    ['discipliné(e)','tolérant(e)','serein(e)','S','S','T'],
+    ['confiant(e)','ordonné(e)','sensible','B','S','S'],
+    ['constant(e)','fidèle','optimiste','T','T','B'],
+    ['dynamique','généreux/euse','actif/ive','A','B','A'],
+    ['sérieux/euse','audacieux/euse','bienveillant(e)','S','A','T'],
+    ['persévérant(e)','indépendant(e)','imaginatif/ive','T','A','B'],
+    ['attentionné(e)','perfectionniste','patient(e)','B','S','T'],
+    ['téméraire','perspicace','concentré(e)','A','T','S'],
+    ['soigneux/euse','émouvant(e)','puissant(e)','S','B','A'],
+    ['accommodant(e)','consciencieux/euse','sobre','S','S','T'],
+    ['charmant(e)','bon(ne)','inflexible','B','T','A'],
+    ['calme','ambitieux/euse','docile','T','A','S'],
+    ['déterminé(e)','amical(e)','soigné(e)','A','B','B'],
+    ['résolu(e)','prudent(e)','modeste','A','T','S'],
+    ['rigoureux/euse','communicatif/ive','efficace','S','B','A'],
+    ['mesuré(e)','attentif/ive','aimable','T','S','B'],
+    ['charmant(e)','entreprenant(e)','de confiance','B','A','T'],
+    ['avenant(e)','réservé(e)','cultivé(e)','B','S','B'],
+    ['travailleur/euse','novateur/trice','compétitif/ive','A','A','A'],
+    ['volontaire','satisfait(e)','accessible','T','T','S'],
+    ['posé(e)','populaire','conventionnel(le)','S','B','T'],
+  ],
+};
+
+function getWords() { return WORDS_ALL[LANG]; }
+
+
+// GROUPS are built dynamically from current language
+function buildGroups() {
+  const W = getWords();
+  const groups = [];
+  for (let col = 0; col < 3; col++) {
+    for (let g = 0; g < 8; g++) {
+      const rows = W.slice(g*4, g*4+4);
+      groups.push({ col, g, rows, idx: col*8+g });
+    }
+  }
+  return groups;
+}
+function getGroups() { return buildGroups(); }
+
+// Normalization tables
+const LOOKUP_M = {
+  '-16':[0,0,0,0,100,100,100,100,0,0,1,0],
+  '-15':[0,0,0,0,100,100,100,100,1,0,2,0],
+  '-14':[0,0,0,0,100,100,100,100,2,0,5,0],
+  '-13':[0,0,0,0,100,100,100,100,3,1,8,1],
+  '-12':[0,0,0,0,100,100,100,100,4,2,9,2],
+  '-11':[0,0,0,0,100,100,100,100,5,3,10,3],
+  '-10':[0,0,0,0,100,100,100,100,7,4,13,5],
+  '-9':[0,0,0,0,100,100,100,100,8,5,16,8],
+  '-8':[0,0,0,0,100,100,100,100,13,8,20,10],
+  '-7':[0,0,0,0,100,100,100,100,16,10,25,13],
+  '-6':[0,0,0,0,100,100,100,100,18,16,30,18],
+  '-5':[0,0,0,0,100,100,100,100,20,18,35,20],
+  '-4':[0,0,0,0,100,100,100,100,25,25,40,30],
+  '-3':[0,0,0,0,100,100,100,100,35,30,42,35],
+  '-2':[0,0,0,0,100,100,100,100,40,35,45,45],
+  '-1':[0,0,0,0,100,100,100,100,45,40,55,55],
+  '0':[3,2,5,2,97,99,99,99,50,45,60,60],
+  '1':[8,7,10,10,95,97,93,97,55,55,65,70],
+  '2':[13,10,18,20,92,90,90,92,65,60,67,75],
+  '3':[18,20,30,35,86,84,84,84,70,65,70,80],
+  '4':[30,30,45,50,82,75,80,75,75,70,75,84],
+  '5':[35,40,55,60,70,55,70,60,80,80,80,87],
+  '6':[55,55,60,70,55,45,60,45,84,82,81,90],
+  '7':[60,65,65,80,45,35,50,35,85,86,82,92],
+  '8':[70,75,70,86,35,25,45,25,86,92,83,93],
+  '9':[80,86,80,90,25,16,35,16,92,95,84,96],
+  '10':[84,92,82,94,18,10,25,10,95,98,86,97],
+  '11':[92,93,84,95,14,8,20,7,98,98,88,98],
+  '12':[93,98,86,98,7,7,16,3,99,99,90,99],
+  '13':[97,99,90,99,5,4,14,1,100,99,92,100],
+  '14':[99,100,94,100,1,2,8,0,100,100,93,100],
+  '15':[100,100,98,100,0,1,5,0,100,100,95,100],
+  '16':[100,100,99,100,0,0,3,0,100,100,97,100],
+  '17':[100,100,100,100,0,0,2,0,100,100,98,100],
+  '18':[100,100,100,100,0,0,1,0,100,100,99,100],
+};
+const LOOKUP_W = {
+  '-16':[0,0,0,0,100,100,100,100,0,0,0,0],
+  '-15':[0,0,0,0,100,100,100,100,0,0,0,0],
+  '-14':[0,0,0,0,100,100,100,100,0,1,0,0],
+  '-13':[0,0,0,0,100,100,100,100,1,2,2,0],
+  '-12':[0,0,0,0,100,100,100,100,3,3,5,0],
+  '-11':[0,0,0,0,100,100,100,100,5,4,7,0],
+  '-10':[0,0,0,0,100,100,100,100,7,5,18,5],
+  '-9':[0,0,0,0,100,100,100,100,8,7,25,6],
+  '-8':[0,0,0,0,100,100,100,100,10,8,35,8],
+  '-7':[0,0,0,0,100,100,100,100,13,10,40,10],
+  '-6':[0,0,0,0,100,100,100,100,16,13,45,16],
+  '-5':[0,0,0,0,100,100,100,100,18,16,55,18],
+  '-4':[0,0,0,0,100,100,100,100,20,18,57,20],
+  '-3':[0,0,0,0,100,100,100,100,25,25,60,22],
+  '-2':[0,0,0,0,100,100,100,100,30,30,65,25],
+  '-1':[0,0,0,0,100,100,100,100,35,35,70,35],
+  '0':[2,2,7,5,99,100,99,100,45,40,75,45],
+  '1':[5,7,13,10,98,99,93,99,50,45,76,55],
+  '2':[10,8,25,20,92,92,90,92,55,60,78,65],
+  '3':[16,13,45,35,84,86,87,80,60,70,80,75],
+  '4':[25,18,55,45,70,75,82,65,65,82,82,82],
+  '5':[35,40,65,55,60,60,80,45,75,90,83,86],
+  '6':[45,60,75,75,45,45,75,35,84,92,84,90],
+  '7':[55,70,82,82,35,35,65,25,85,93,85,92],
+  '8':[65,80,84,86,30,16,55,18,86,95,86,93],
+  '9':[75,90,86,93,18,8,45,10,90,97,88,97],
+  '10':[84,93,90,95,16,7,40,6,95,98,90,99],
+  '11':[92,98,91,98,13,6,25,3,98,98,92,100],
+  '12':[95,99,93,99,5,5,18,0,99,99,93,100],
+  '13':[99,100,95,100,2,4,13,0,100,99,98,100],
+  '14':[100,100,98,100,0,3,5,0,100,100,98,100],
+  '15':[100,100,99,100,0,2,0,0,100,100,98,100],
+  '16':[100,100,100,100,0,0,0,0,100,100,99,100],
+  '17':[100,100,100,100,0,0,0,0,100,100,99,100],
+  '18':[100,100,100,100,0,0,0,0,100,100,99,100],
+};
+
+// col index: S=0, T=1, A=2, B=3
+const STAB_IDX = {S:0, T:1, A:2, B:3};
+const STAB_NAMES = {
+  S: 'Sorgfalt',
+  T: 'Geduld',
+  A: 'Tatkraft',
+  B: 'Begeisterung'
+};
+const STAB_COLORS = {S:'var(--s-color)', T:'var(--t-color)', A:'var(--a-color)', B:'var(--b-color)'};
+const STAB_LIGHTS = {S:'var(--s-light)', T:'var(--t-light)', A:'var(--a-light)', B:'var(--b-light)'};
+
+const INTERPRETATIONS = {
+  S: {
+    high: {
+      title: 'Ausgeprägte Sorgfalt (65–75+)',
+      text: 'Analytisches Denken, Planen und Gestalten. Hohe Detailtreue, bewusster Umgang mit Risiken. Kooperativ, empfindsam und diplomatisch — mitunter konfliktscheu. Entscheidungen werden sorgfältig abgewogen, gelegentlich zögernd. Brauchen Wertschätzung und Sicherheit, um sich weiterzuentwickeln. Delegieren fällt manchmal schwer.'
+    },
+    low: {
+      title: 'Geringe Sorgfalt (35–25 und weniger)',
+      text: 'Offenheit und Spontaneität. Unabhängiges Handeln, Skepsis gegenüber Regeln und formalisierten Prozessen. Auch unter Druck leistungsstark. Neigung, Details zu vernachlässigen. Direkt, impulsiv in Entscheidungen, risikofreudig und geradlinig.'
+    }
+  },
+  T: {
+    high: {
+      title: 'Ausgeprägte Geduld (65–75+)',
+      text: 'Beständigkeit, Loyalität und Verlässlichkeit prägen das Verhalten. Ruhig, stabil, hervorragende Zuhörerin/hervorragender Zuhörer. Wertkonservative Haltung, ausgeprägtes Zugehörigkeitsgefühl. Veränderungen werden eher als Herausforderung erlebt. Setzt und respektiert klare Grenzen und Prinzipien. Zu viele Verpflichtungen können zur Überlastung führen.'
+    },
+    low: {
+      title: 'Geringe Geduld (35–25 und weniger)',
+      text: 'Schnelles Reagieren auf Veränderungen, aktives Interesse an neuen Aufgaben. Hohes persönliches Engagement, jedoch mitunter mangelnde Systematik. Ungeduld und Schwierigkeit, sich zu entspannen. Geringe Aufmerksamkeit beim Zuhören in längeren Prozessen.'
+    }
+  },
+  A: {
+    high: {
+      title: 'Ausgeprägte Tatkraft (65–75+)',
+      text: 'Starke Ziel- und Ergebnisorientierung. Hohe Verantwortungsbereitschaft und Entscheidungsstärke. Sachbezogene, direkte Kommunikation. Neugierig und herausforderungsbereit. Ziel ist wichtiger als Prozess. Benötigen Gestaltungsfreiheit. Tendenz, andere stark zu fordern — auch sich selbst.'
+    },
+    low: {
+      title: 'Geringe Tatkraft (35–25 und weniger)',
+      text: 'Konsensorientierter Stil. Beratende und vermittelnde Funktion. Fähigkeit, positive Atmosphäre in Gruppen herzustellen. Mitunter zu nachgiebig. Vermindertes Durchsetzungsvermögen. Tendenz, Konflikte zu lange schwelen zu lassen, bevor eingegriffen wird.'
+    }
+  },
+  B: {
+    high: {
+      title: 'Ausgeprägte Begeisterung (65–75+)',
+      text: 'Aussenorientierung und ausgeprägte Kontaktbereitschaft. Positive Grundhaltung, optimistisches Auftreten. Starkes Überzeugungsvermögen und Begeisterungsfähigkeit. Traut sich viel zu — Gefahr der Überforderung. Komplexität von Problemen wird gelegentlich unterschätzt. Konfrontationen eher vermeidend.'
+    },
+    low: {
+      title: 'Geringe Begeisterung (35–25 und weniger)',
+      text: 'Sachbezogene, analytische Orientierung. Emotionale Kontrolle und Fokus auf Problemlösung. Zurückhaltend, reserviert, kühl wirkend. Aufgaben werden mit grosser Sachlichkeit bewältigt. Interpersoneller Kontakt wird bewusst dosiert.'
+    }
+  }
+};
+
+// ── RENDER QUESTIONS ────────────────────────────────────────────────────────
+
+function renderQuestions() {
+  const container = document.getElementById('questions-container');
+  const l = t();
+  const GROUPS = getGroups();
+
+  GROUPS.forEach((grp, gi) => {
+
+    const div = document.createElement('div');
+    div.className = 'question-group';
+    div.id = `grp-${gi}`;
+
+    div.innerHTML = `
+      <div class="group-header">
+        <span class="group-num">${l.groupOf(gi + 1, 24)}</span>
+        <span class="group-status" id="status-${gi}">${l.notFilled}</span>
+      </div>
+      <div class="column-labels">
+        <div class="col-label">—</div>
+        <div class="col-label" style="color:var(--blue)">${l.colMost}<br><span style="font-weight:400;text-transform:none;letter-spacing:0">${l.colMostLabel}</span></div>
+        <div class="col-label" style="color:#9c7a0a">${l.colLeast}<br><span style="font-weight:400;text-transform:none;letter-spacing:0">${l.colLeastLabel}</span></div>
+      </div>
+    `;
+
+    grp.rows.forEach((row, ri) => {
+      const wordRow = document.createElement('div');
+      wordRow.className = 'word-row';
+      const wordId = `g${gi}r${ri}`;
+      wordRow.innerHTML = `
+        <div class="word-label">${row[grp.col]}</div>
+        <div class="radio-cell">
+          <label class="radio-wrap m">
+            <input type="radio" name="M-${gi}" value="${ri}" onchange="onRadioChange(${gi})">
+            <div class="radio-custom"></div>
+          </label>
+        </div>
+        <div class="radio-cell">
+          <label class="radio-wrap w">
+            <input type="radio" name="W-${gi}" value="${ri}" onchange="onRadioChange(${gi})">
+            <div class="radio-custom"></div>
+          </label>
+        </div>
+      `;
+      div.appendChild(wordRow);
+    });
+
+    container.appendChild(div);
+  });
+
+  // Set today's date
+  document.getElementById('dateInput').valueAsDate = new Date();
+}
+
+let completedGroups = 0;
+
+function onRadioChange(gi) {
+  const mVal = document.querySelector(`input[name="M-${gi}"]:checked`)?.value;
+  const wVal = document.querySelector(`input[name="W-${gi}"]:checked`)?.value;
+  const grp = document.getElementById(`grp-${gi}`);
+  const status = document.getElementById(`status-${gi}`);
+  const l = t();
+
+  if (mVal !== undefined && wVal !== undefined && mVal === wVal) {
+    document.querySelectorAll(`input[name="W-${gi}"]`).forEach(r => r.checked = false);
+    status.textContent = LANG === 'fr' ? 'M et W doivent être différents' : LANG === 'en' ? 'M and L must differ' : 'M und W müssen verschieden sein';
+    grp.classList.remove('complete');
+    grp.classList.add('error');
+    updateProgress();
+    return;
+  }
+
+  const complete = mVal !== undefined && wVal !== undefined && mVal !== wVal;
+  grp.classList.toggle('complete', complete);
+  grp.classList.toggle('error', false);
+  status.textContent = complete ? '✓' : (LANG === 'fr' ? 'Choisir M et W' : LANG === 'en' ? 'Select M and L' : 'Bitte M und W wählen');
+  updateProgress();
+}
+
+function updateProgress() {
+  let done = 0;
+  for (let gi = 0; gi < 24; gi++) {
+    const mVal = document.querySelector(`input[name="M-${gi}"]:checked`)?.value;
+    const wVal = document.querySelector(`input[name="W-${gi}"]:checked`)?.value;
+    if (mVal !== undefined && wVal !== undefined && mVal !== wVal) done++;
+  }
+  const pct = (done / 24) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = t().progress(done, 24);
+}
+
+// ── SCORING ─────────────────────────────────────────────────────────────────
+
+function lookup(table, val, stabIdx) {
+  const key = String(Math.max(-16, Math.min(18, Math.round(val))));
+  if (table[key] !== undefined) return table[key][stabIdx];
+  if (val < -16) return table['-16'][stabIdx];
+  return table['18'][stabIdx];
+}
+
+function computeScores() {
+  const mCount = {S:0, T:0, A:0, B:0};
+  const wCount = {S:0, T:0, A:0, B:0};
+  const mWords = [], wWords = [];
+  const GROUPS = getGroups();
+
+  for (let gi = 0; gi < 24; gi++) {
+    const mVal = parseInt(document.querySelector(`input[name="M-${gi}"]:checked`)?.value);
+    const wVal = parseInt(document.querySelector(`input[name="W-${gi}"]:checked`)?.value);
+    const grp = GROUPS[gi];
+
+    if (!isNaN(mVal)) {
+      const stab = grp.rows[mVal][3 + grp.col];
+      mCount[stab]++;
+      mWords.push(grp.rows[mVal][grp.col]);
+    }
+    if (!isNaN(wVal)) {
+      const stab = grp.rows[wVal][3 + grp.col];
+      wCount[stab]++;
+      wWords.push(grp.rows[wVal][grp.col]);
+    }
+  }
+
+  const diff = {
+    S: mCount.S - wCount.S,
+    T: mCount.T - wCount.T,
+    A: mCount.A - wCount.A,
+    B: mCount.B - wCount.B
+  };
+
+  const gender = document.getElementById('genderInput').value;
+  const table = gender === 'w' ? LOOKUP_W : LOOKUP_M;
+
+  // M profile (cols 0-3), W profile (cols 4-7), Diff profile (cols 8-11)
+  const profM = {
+    S: lookup(table, mCount.S, 0),
+    T: lookup(table, mCount.T, 1),
+    A: lookup(table, mCount.A, 2),
+    B: lookup(table, mCount.B, 3),
+  };
+  const profW = {
+    S: lookup(table, wCount.S, 4),
+    T: lookup(table, wCount.T, 5),
+    A: lookup(table, wCount.A, 6),
+    B: lookup(table, wCount.B, 7),
+  };
+  const profD = {
+    S: lookup(table, diff.S, 8),
+    T: lookup(table, diff.T, 9),
+    A: lookup(table, diff.A, 10),
+    B: lookup(table, diff.B, 11),
+  };
+
+  return { mCount, wCount, diff, profM, profW, profD, _mWords: mWords, _wWords: wWords };
+}
+
+// ── URL MODE DETECTION ───────────────────────────────────────────────────────
+
+const IS_COACH = new URLSearchParams(window.location.search).has('coach');
+
+// If ?coach=DATA is in URL, go straight to results (coach view)
+function checkCoachUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const data = params.get('coach');
+  if (!data || data === 'true') return; // no data payload
+  try {
+    const decoded = JSON.parse(atob(data));
+    document.getElementById('form-section').style.display = 'none';
+    renderCoachResults(decoded);
+  } catch(e) {
+    // invalid data, show form normally
+  }
+}
+
+// ── SUBMIT ───────────────────────────────────────────────────────────────────
+
+function submitTest() {
+  let allDone = true;
+  for (let gi = 0; gi < 24; gi++) {
+    const mVal = document.querySelector(`input[name="M-${gi}"]:checked`)?.value;
+    const wVal = document.querySelector(`input[name="W-${gi}"]:checked`)?.value;
+    if (mVal === undefined || wVal === undefined || mVal === wVal) {
+      allDone = false;
+      document.getElementById(`grp-${gi}`).classList.add('error');
+    }
+  }
+  if (!allDone) {
+    document.getElementById('errorMsg').style.display = 'block';
+    document.querySelector('.question-group.error')?.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  const scores = computeScores();
+  const name   = document.getElementById('nameInput').value || '';
+  const date   = document.getElementById('dateInput').value || '';
+  const gender = document.getElementById('genderInput').value || 'm';
+
+  // Store words locally (not in URL to keep it short)
+  _lastAnswers = { mWords: scores._mWords, wWords: scores._wWords, lang: LANG };
+
+  // Build payload WITHOUT words to keep URL short
+  const { _mWords, _wWords, ...scoresClean } = scores;
+  const payload = btoa(JSON.stringify({ scores: scoresClean, name, date, gender, lang: LANG }));
+  const coachUrl = `${location.origin}${location.pathname}?coach=${payload}`;
+
+  showCoacheeConfirmation(name, coachUrl, scores._mWords, scores._wWords);
+}
+
+// ── COACHEE CONFIRMATION PAGE ─────────────────────────────────────────────────
+
+function showCoacheeConfirmation(name, coachUrl, mWords, wWords) {
+  document.getElementById('form-section').style.display = 'none';
+  document.getElementById('results').style.display = 'none';
+
+  const conf = document.getElementById('confirmation');
+  conf.style.display = 'block';
+  const l = t();
+  document.getElementById('conf-name').textContent = name ? `${l.thankYou.replace('!','')} ${name}!` : l.thankYou;
+  // Update confirmation texts in current language
+  conf.querySelector('p').textContent = l.confText;
+  conf.querySelector('.conf-sub').textContent = l.confClose;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+
+  // Send coach URL via EmailJS, include word list in email body
+  const date = document.getElementById('dateInput').value || new Date().toLocaleDateString('de-CH');
+  const wordSummary = mWords && wWords
+    ? `\nM (${LANG}): ${mWords.join(', ')}\nW (${LANG}): ${wWords.join(', ')}`
+    : '';
+  emailjs.send('service_yw6gsbd', 'template_9jbvzjy', {
+    coachee_name: name || '(kein Name angegeben)',
+    date: date,
+    coach_url: coachUrl + wordSummary
+  }).then(() => {
+    const el = document.getElementById('conf-sending');
+    const el = document.getElementById('conf-sending');
+    el.textContent = t().sent;
+    el.className = 'conf-status success';
+  }).catch(() => {
+    const el = document.getElementById('conf-sending');
+    el.textContent = t().sendError;
+    el.className = 'conf-status error';
+  });
+}
+
+// ── COACH RESULTS ─────────────────────────────────────────────────────────────
+
+function renderCoachResults(decoded) {
+  const { scores, name, date, gender, lang } = decoded;
+  // Always show coach view in DE by default; keep coachee lang for word list only
+  LANG = 'de';
+  const coacheeLang = lang || 'de';
+  const l = t();
+  _lastAnswers = { mWords: scores._mWords || [], wWords: scores._wWords || [], lang: coacheeLang };
+  document.getElementById('results').style.display = 'block';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+
+  // Update lang buttons
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent === LANG.toUpperCase()));
+
+  const genderLabel = l.genderLabel(gender);
+  document.getElementById('resultName').textContent = name || l.interpTitle;
+  document.getElementById('resultMeta').textContent = `${genderLabel} · ${date} · ${l.metaSuffix}`;
+
+  const STAB_NAMES = l.stabNames;
+  const dominant = Object.entries(scores.profM).sort((a,b) => b[1]-a[1])[0][0];
+  document.getElementById('dominantBanner').innerHTML = `
+    <div class="dominant-letter" style="font-size:1rem;padding:1rem 1.2rem">${STAB_NAMES[dominant]}</div>
+    <div class="dominant-text">
+      <h3>${l.dominant}: ${STAB_NAMES[dominant]}</h3>
+      <p>${l.highestNorm}: ${scores.profM[dominant]} ${l.points}</p>
+    </div>
+  `;
+
+  // Update profile card titles/desc
+  document.querySelector('#profileM h3').innerHTML = `${l.profileMTitle} <span class="profile-hint">${l.profileMHint}</span>`;
+  document.querySelector('#profileM .profile-desc').textContent = l.profileMDesc;
+  document.querySelector('#profileW h3').innerHTML = `${l.profileWTitle} <span class="profile-hint">${l.profileWHint}</span>`;
+  document.querySelector('#profileW .profile-desc').textContent = l.profileWDesc;
+  document.querySelector('#profileD h3').innerHTML = `${l.profileDTitle} <span class="profile-hint">${l.profileDHint}</span>`;
+  document.querySelector('#profileD .profile-desc').innerHTML = `${l.profileDDesc} <strong>${l.profileDStrong}</strong>`;
+  document.querySelector('#exportInterp .interp-title').textContent = l.interpTitle;
+  document.querySelector('.raw-toggle').textContent = l.rawToggle;
+  document.querySelector('.btn-reset').textContent = l.resetBtn;
+  const btns = document.querySelectorAll('.coach-btn');
+  if (btns[0]) btns[0].textContent = l.btnWords;
+  if (btns[1]) btns[1].textContent = l.btnProfile;
+  if (btns[2]) btns[2].textContent = l.btnInterp;
+
+  renderBars('barsM', scores.profM);
+  renderBars('barsW', scores.profW);
+  renderBars('barsD', scores.profD);
+  renderInterpretations(scores.profD);
+
+  document.getElementById('rawData').innerHTML = `
+    M: S=${scores.mCount.S} T=${scores.mCount.T} A=${scores.mCount.A} B=${scores.mCount.B}<br>
+    W: S=${scores.wCount.S} T=${scores.wCount.T} A=${scores.wCount.A} B=${scores.wCount.B}<br>
+    D: S=${scores.diff.S} T=${scores.diff.T} A=${scores.diff.A} B=${scores.diff.B}
+  `;
+
+  setTimeout(() => {
+    document.querySelectorAll('.stab-bar-fill').forEach(el => {
+      el.style.width = el.dataset.pct + '%';
+    });
+  }, 100);
+}
+
+function renderBars(containerId, profile) {
+  const c = document.getElementById(containerId);
+  const STAB_NAMES = t().stabNames;
+  c.innerHTML = '';
+  ['S','T','A','B'].forEach(dim => {
+    const val = profile[dim];
+    c.innerHTML += `
+      <div class="stab-bar-group">
+        <div class="stab-bar-label">
+          <span class="stab-name" style="color:${STAB_COLORS[dim]}">${STAB_NAMES[dim]}</span>
+          <span class="stab-score">${val}</span>
+        </div>
+        <div class="stab-bar-track">
+          <div class="stab-bar-fill ${dim.toLowerCase()}-bar" data-pct="${val}" style="width:0%"></div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function renderInterpretations(profile) {
+  const c = document.getElementById('interpCards');
+  const l = t();
+  const STAB_NAMES = l.stabNames;
+  c.innerHTML = '';
+  const sorted = ['S','T','A','B'].sort((a,b) => profile[b]-profile[a]);
+  sorted.forEach(dim => {
+    const val = profile[dim];
+    const isHigh = val >= 60;
+    const isLow = val <= 40;
+    const interp = INTERPRETATIONS[dim];
+    const card = document.createElement('div');
+    card.className = 'interp-card';
+    card.innerHTML = `
+      <div class="interp-head" onclick="toggleInterp(this)">
+        <div class="interp-badge" style="background:${STAB_COLORS[dim]};font-size:0.7rem;padding:0.4rem 0.6rem">${STAB_NAMES[dim]}</div>
+        <div class="interp-info">
+          <h4>${STAB_NAMES[dim]}</h4>
+          <span>${isHigh ? l.interpHigh : isLow ? l.interpLow : l.interpMid}</span>
+        </div>
+        <div class="interp-score-badge" style="background:${STAB_COLORS[dim]}">${val}</div>
+      </div>
+      <div class="interp-body ${isHigh || isLow ? 'open' : ''}">
+        ${isHigh ? `<div class="interp-block"><h5 style="color:${STAB_COLORS[dim]}">${interp.high.title}</h5><p>${interp.high.text}</p></div>` : ''}
+        ${isLow ? `<div class="interp-block"><h5 style="color:${STAB_COLORS[dim]}">${interp.low.title}</h5><p>${interp.low.text}</p></div>` : ''}
+        ${!isHigh && !isLow ? `<div class="interp-block"><h5 style="color:${STAB_COLORS[dim]}">${l.interpMid} (41–59)</h5><p>${l.interpMidText}</p></div>` : ''}
+        <div class="interp-block">
+          <h5 style="color:${STAB_COLORS[dim]}">${l.interpBothPoles}</h5>
+          <p><strong>${l.interpHighLabel}</strong> ${interp.high.text}</p>
+          <p style="margin-top:0.6rem"><strong>${l.interpLowLabel}</strong> ${interp.low.text}</p>
+        </div>
+      </div>
+    `;
+    c.appendChild(card);
+  });
+}
+
+function toggleInterp(head) {
+  head.nextElementSibling.classList.toggle('open');
+}
+
+function toggleRaw() {
+  const rd = document.getElementById('rawData');
+  rd.style.display = rd.style.display === 'block' ? 'none' : 'block';
+}
+
+function resetTest() {
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('form-section').style.display = 'block';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// ── WORD LIST ────────────────────────────────────────────────────────────────
+
+let _lastAnswers = null; // store answers for word list
+
+function toggleWordList() {
+  const el = document.getElementById('wordList');
+  if (el.style.display === 'block') { el.style.display = 'none'; return; }
+  if (!_lastAnswers) { el.innerHTML = '<p style="color:var(--muted)">Keine Wortdaten verfügbar.</p>'; el.style.display = 'block'; return; }
+
+  const mWords = _lastAnswers.mWords || [];
+  const wWords = _lastAnswers.wWords || [];
+
+  const l = t();
+  const wl = I18N[_lastAnswers.lang || LANG];
+  el.innerHTML = `
+    <h4>${l.wordListTitle}</h4>
+    <div class="word-list-cols">
+      <div>
+        <div class="word-col-title">${wl.wordMost(mWords.length)}</div>
+        ${mWords.map(w => `<span class="word-pill">${w}</span>`).join('')}
+      </div>
+      <div>
+        <div class="word-col-title">${wl.wordLeast(wWords.length)}</div>
+        ${wWords.map(w => `<span class="word-pill">${w}</span>`).join('')}
+      </div>
+    </div>
+  `;
+  el.style.display = 'block';
+}
+
+// ── PNG EXPORT ───────────────────────────────────────────────────────────────
+
+function loadHtml2Canvas(cb) {
+  if (window.html2canvas) { cb(); return; }
+  const s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+  s.onload = cb;
+  document.head.appendChild(s);
+}
+
+function captureElement(id, filename) {
+  loadHtml2Canvas(() => {
+    const el = document.getElementById(id);
+    // Animate bars to full width before capture
+    el.querySelectorAll('.stab-bar-fill').forEach(b => b.style.width = b.dataset.pct + '%');
+    setTimeout(() => {
+      html2canvas(el, { scale: 2, backgroundColor: '#FAF8F4', useCORS: true, logging: false }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+    }, 200);
+  });
+}
+
+function exportProfiles() {
+  const name = document.getElementById('resultName').textContent || 'auswertung';
+  captureElement('exportProfiles', `profil-${name}.png`);
+}
+
+function exportInterpretation() {
+  // Expand all interp cards first
+  document.querySelectorAll('.interp-body').forEach(el => el.classList.add('open'));
+  const name = document.getElementById('resultName').textContent || 'auswertung';
+  captureElement('exportInterp', `interpretation-${name}.png`);
+}
+
+function renderCoachResultsInLang(decoded) {
+  // Re-render coach view in current LANG without resetting to DE
+  const { scores, name, date, gender, lang } = decoded;
+  const coacheeLang = lang || 'de';
+  const l = t();
+  _lastAnswers = { mWords: scores._mWords || [], wWords: scores._wWords || [], lang: coacheeLang };
+
+  const genderLabel = l.genderLabel(gender);
+  document.getElementById('resultName').textContent = name || l.interpTitle;
+  document.getElementById('resultMeta').textContent = `${genderLabel} · ${date} · ${l.metaSuffix}`;
+
+  const STAB_NAMES = l.stabNames;
+  const dominant = Object.entries(scores.profM).sort((a,b) => b[1]-a[1])[0][0];
+  document.getElementById('dominantBanner').innerHTML = `
+    <div class="dominant-letter" style="font-size:1rem;padding:1rem 1.2rem">${STAB_NAMES[dominant]}</div>
+    <div class="dominant-text">
+      <h3>${l.dominant}: ${STAB_NAMES[dominant]}</h3>
+      <p>${l.highestNorm}: ${scores.profM[dominant]} ${l.points}</p>
+    </div>
+  `;
+  document.querySelector('#profileM h3').innerHTML = `${l.profileMTitle} <span class="profile-hint">${l.profileMHint}</span>`;
+  document.querySelector('#profileM .profile-desc').textContent = l.profileMDesc;
+  document.querySelector('#profileW h3').innerHTML = `${l.profileWTitle} <span class="profile-hint">${l.profileWHint}</span>`;
+  document.querySelector('#profileW .profile-desc').textContent = l.profileWDesc;
+  document.querySelector('#profileD h3').innerHTML = `${l.profileDTitle} <span class="profile-hint">${l.profileDHint}</span>`;
+  document.querySelector('#profileD .profile-desc').innerHTML = `${l.profileDDesc} <strong>${l.profileDStrong}</strong>`;
+  document.querySelector('#exportInterp .interp-title').textContent = l.interpTitle;
+  document.querySelector('.raw-toggle').textContent = l.rawToggle;
+  document.querySelector('.btn-reset').textContent = l.resetBtn;
+  const btns = document.querySelectorAll('.coach-btn');
+  if (btns[0]) btns[0].textContent = l.btnWords;
+  if (btns[1]) btns[1].textContent = l.btnProfile;
+  if (btns[2]) btns[2].textContent = l.btnInterp;
+
+  renderBars('barsM', scores.profM);
+  renderBars('barsW', scores.profW);
+  renderBars('barsD', scores.profD);
+  renderInterpretations(scores.profD);
+
+  // Close word list if open so it re-renders in new lang on next click
+  document.getElementById('wordList').style.display = 'none';
+
+  setTimeout(() => {
+    document.querySelectorAll('.stab-bar-fill').forEach(el => {
+      el.style.width = el.dataset.pct + '%';
+    });
+  }, 100);
+}
+
+
+applyTranslations();
+renderQuestions();
+checkCoachUrl();
+</script>
+</body>
+</html>
