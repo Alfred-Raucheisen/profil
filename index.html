@@ -844,11 +844,9 @@
     <div class="raw-data" id="rawData"></div>
 
     <div class="coach-actions">
-      <button class="coach-btn" onclick="toggleWordList()">📋 Gewählte Wörter anzeigen</button>
       <button class="coach-btn" onclick="exportProfiles()">📊 Profil exportieren</button>
       <button class="coach-btn" onclick="exportInterpretation()">📄 Interpretation exportieren</button>
     </div>
-    <div id="wordList" style="display:none" class="word-list-section"></div>
   </div>
 
 </div>
@@ -1265,48 +1263,64 @@ const STAB_NAMES = {
 const STAB_COLORS = {S:'var(--s-color)', T:'var(--t-color)', A:'var(--a-color)', B:'var(--b-color)'};
 const STAB_LIGHTS = {S:'var(--s-light)', T:'var(--t-light)', A:'var(--a-light)', B:'var(--b-light)'};
 
-const INTERPRETATIONS = {
-  S: {
-    high: {
-      title: 'Ausgeprägte Sorgfalt (65–75+)',
-      text: 'Analytisches Denken, Planen und Gestalten. Hohe Detailtreue, bewusster Umgang mit Risiken. Kooperativ, empfindsam und diplomatisch — mitunter konfliktscheu. Entscheidungen werden sorgfältig abgewogen, gelegentlich zögernd. Brauchen Wertschätzung und Sicherheit, um sich weiterzuentwickeln. Delegieren fällt manchmal schwer.'
+const INTERPRETATIONS_ALL = {
+  de: {
+    S: {
+      high: { title: 'Ausgeprägte Sorgfalt (65–75+)', text: 'Analytisches Denken, Planen und Gestalten. Hohe Detailtreue, bewusster Umgang mit Risiken. Kooperativ, empfindsam und diplomatisch — mitunter konfliktscheu. Entscheidungen werden sorgfältig abgewogen, gelegentlich zögernd. Brauchen Wertschätzung und Sicherheit, um sich weiterzuentwickeln. Delegieren fällt manchmal schwer.' },
+      low:  { title: 'Geringe Sorgfalt (35–25 und weniger)', text: 'Offenheit und Spontaneität. Unabhängiges Handeln, Skepsis gegenüber Regeln und formalisierten Prozessen. Auch unter Druck leistungsstark. Neigung, Details zu vernachlässigen. Direkt, impulsiv in Entscheidungen, risikofreudig und geradlinig.' }
     },
-    low: {
-      title: 'Geringe Sorgfalt (35–25 und weniger)',
-      text: 'Offenheit und Spontaneität. Unabhängiges Handeln, Skepsis gegenüber Regeln und formalisierten Prozessen. Auch unter Druck leistungsstark. Neigung, Details zu vernachlässigen. Direkt, impulsiv in Entscheidungen, risikofreudig und geradlinig.'
+    T: {
+      high: { title: 'Ausgeprägte Geduld (65–75+)', text: 'Beständigkeit, Loyalität und Verlässlichkeit prägen das Verhalten. Ruhig, stabil, hervorragende Zuhörerin/hervorragender Zuhörer. Wertkonservative Haltung, ausgeprägtes Zugehörigkeitsgefühl. Veränderungen werden eher als Herausforderung erlebt. Setzt und respektiert klare Grenzen und Prinzipien. Zu viele Verpflichtungen können zur Überlastung führen.' },
+      low:  { title: 'Geringe Geduld (35–25 und weniger)', text: 'Schnelles Reagieren auf Veränderungen, aktives Interesse an neuen Aufgaben. Hohes persönliches Engagement, jedoch mitunter mangelnde Systematik. Ungeduld und Schwierigkeit, sich zu entspannen. Geringe Aufmerksamkeit beim Zuhören in längeren Prozessen.' }
+    },
+    A: {
+      high: { title: 'Ausgeprägte Tatkraft (65–75+)', text: 'Starke Ziel- und Ergebnisorientierung. Hohe Verantwortungsbereitschaft und Entscheidungsstärke. Sachbezogene, direkte Kommunikation. Neugierig und herausforderungsbereit. Ziel ist wichtiger als Prozess. Benötigen Gestaltungsfreiheit. Tendenz, andere stark zu fordern — auch sich selbst.' },
+      low:  { title: 'Geringe Tatkraft (35–25 und weniger)', text: 'Konsensorientierter Stil. Beratende und vermittelnde Funktion. Fähigkeit, positive Atmosphäre in Gruppen herzustellen. Mitunter zu nachgiebig. Vermindertes Durchsetzungsvermögen. Tendenz, Konflikte zu lange schwelen zu lassen, bevor eingegriffen wird.' }
+    },
+    B: {
+      high: { title: 'Ausgeprägte Begeisterung (65–75+)', text: 'Aussenorientierung und ausgeprägte Kontaktbereitschaft. Positive Grundhaltung, optimistisches Auftreten. Starkes Überzeugungsvermögen und Begeisterungsfähigkeit. Traut sich viel zu — Gefahr der Überforderung. Komplexität von Problemen wird gelegentlich unterschätzt. Konfrontationen eher vermeidend.' },
+      low:  { title: 'Geringe Begeisterung (35–25 und weniger)', text: 'Sachbezogene, analytische Orientierung. Emotionale Kontrolle und Fokus auf Problemlösung. Zurückhaltend, reserviert, kühl wirkend. Aufgaben werden mit grosser Sachlichkeit bewältigt. Interpersoneller Kontakt wird bewusst dosiert.' }
     }
   },
-  T: {
-    high: {
-      title: 'Ausgeprägte Geduld (65–75+)',
-      text: 'Beständigkeit, Loyalität und Verlässlichkeit prägen das Verhalten. Ruhig, stabil, hervorragende Zuhörerin/hervorragender Zuhörer. Wertkonservative Haltung, ausgeprägtes Zugehörigkeitsgefühl. Veränderungen werden eher als Herausforderung erlebt. Setzt und respektiert klare Grenzen und Prinzipien. Zu viele Verpflichtungen können zur Überlastung führen.'
+  en: {
+    S: {
+      high: { title: 'High Conscientiousness (65–75+)', text: 'Analytical thinking, planning and structuring. High attention to detail, careful risk management. Cooperative, sensitive and diplomatic — sometimes conflict-averse. Decisions are carefully weighed, occasionally hesitant. Need appreciation and security to develop further. Delegating can be challenging.' },
+      low:  { title: 'Low Conscientiousness (35–25 and below)', text: 'Openness and spontaneity. Independent action, scepticism towards rules and formal processes. Performs well even under pressure. Tendency to overlook details. Direct, impulsive in decisions, risk-taking and straightforward.' }
     },
-    low: {
-      title: 'Geringe Geduld (35–25 und weniger)',
-      text: 'Schnelles Reagieren auf Veränderungen, aktives Interesse an neuen Aufgaben. Hohes persönliches Engagement, jedoch mitunter mangelnde Systematik. Ungeduld und Schwierigkeit, sich zu entspannen. Geringe Aufmerksamkeit beim Zuhören in längeren Prozessen.'
+    T: {
+      high: { title: 'High Steadiness (65–75+)', text: 'Consistency, loyalty and reliability characterise behaviour. Calm, stable, excellent listener. Value-conservative attitude, strong sense of belonging. Changes tend to be experienced as challenges. Sets and respects clear boundaries and principles. Too many commitments can lead to overload.' },
+      low:  { title: 'Low Steadiness (35–25 and below)', text: 'Quick to respond to change, actively interested in new tasks. High personal engagement, but sometimes lacking in systematic approach. Impatience and difficulty relaxing. Limited attention when listening in longer processes.' }
+    },
+    A: {
+      high: { title: 'High Dominance (65–75+)', text: 'Strong goal and results orientation. High accountability and decisive action. Objective, direct communication. Curious and challenge-driven. The goal matters more than the process. Needs freedom to act. Tendency to place high demands on others — and on themselves.' },
+      low:  { title: 'Low Dominance (35–25 and below)', text: 'Consensus-oriented style. Advisory and mediating role. Ability to create a positive atmosphere in groups. Sometimes too accommodating. Reduced assertiveness. Tendency to let conflicts simmer too long before intervening.' }
+    },
+    B: {
+      high: { title: 'High Influence (65–75+)', text: 'Outward orientation and strong willingness to connect. Positive attitude, optimistic presence. Strong persuasiveness and enthusiasm. Tends to take on a lot — risk of overextension. Complexity of problems is sometimes underestimated. Tends to avoid confrontation.' },
+      low:  { title: 'Low Influence (35–25 and below)', text: 'Objective, analytical orientation. Emotional control and focus on problem-solving. Reserved, introverted, can appear cool. Tasks are handled with great objectivity. Interpersonal contact is consciously rationed.' }
     }
   },
-  A: {
-    high: {
-      title: 'Ausgeprägte Tatkraft (65–75+)',
-      text: 'Starke Ziel- und Ergebnisorientierung. Hohe Verantwortungsbereitschaft und Entscheidungsstärke. Sachbezogene, direkte Kommunikation. Neugierig und herausforderungsbereit. Ziel ist wichtiger als Prozess. Benötigen Gestaltungsfreiheit. Tendenz, andere stark zu fordern — auch sich selbst.'
+  fr: {
+    S: {
+      high: { title: 'Rigueur prononcée (65–75+)', text: 'Pensée analytique, planification et structuration. Grande attention aux détails, gestion consciente des risques. Coopératif/ve, sensible et diplomatique — parfois réticent(e) aux conflits. Les décisions sont soigneusement pesées, parfois avec hésitation. A besoin de reconnaissance et de sécurité pour se développer. La délégation peut s\'avérer difficile.' },
+      low:  { title: 'Faible rigueur (35–25 et moins)', text: 'Ouverture et spontanéité. Action indépendante, scepticisme envers les règles et processus formalisés. Performant(e) même sous pression. Tendance à négliger les détails. Direct(e), impulsif/ve dans les décisions, goût du risque et franchise.' }
     },
-    low: {
-      title: 'Geringe Tatkraft (35–25 und weniger)',
-      text: 'Konsensorientierter Stil. Beratende und vermittelnde Funktion. Fähigkeit, positive Atmosphäre in Gruppen herzustellen. Mitunter zu nachgiebig. Vermindertes Durchsetzungsvermögen. Tendenz, Konflikte zu lange schwelen zu lassen, bevor eingegriffen wird.'
-    }
-  },
-  B: {
-    high: {
-      title: 'Ausgeprägte Begeisterung (65–75+)',
-      text: 'Aussenorientierung und ausgeprägte Kontaktbereitschaft. Positive Grundhaltung, optimistisches Auftreten. Starkes Überzeugungsvermögen und Begeisterungsfähigkeit. Traut sich viel zu — Gefahr der Überforderung. Komplexität von Problemen wird gelegentlich unterschätzt. Konfrontationen eher vermeidend.'
+    T: {
+      high: { title: 'Patience prononcée (65–75+)', text: 'La constance, la loyauté et la fiabilité caractérisent le comportement. Calme, stable, excellente capacité d\'écoute. Attitude conservatrice, fort sentiment d\'appartenance. Les changements sont vécus plutôt comme des défis. Fixe et respecte des limites et des principes clairs. Trop d\'engagements peuvent mener à la surcharge.' },
+      low:  { title: 'Faible patience (35–25 et moins)', text: 'Réactivité rapide face au changement, intérêt actif pour de nouvelles tâches. Fort engagement personnel, mais parfois manque de systématique. Impatience et difficulté à se détendre. Attention limitée lors de longues séquences d\'écoute.' }
     },
-    low: {
-      title: 'Geringe Begeisterung (35–25 und weniger)',
-      text: 'Sachbezogene, analytische Orientierung. Emotionale Kontrolle und Fokus auf Problemlösung. Zurückhaltend, reserviert, kühl wirkend. Aufgaben werden mit grosser Sachlichkeit bewältigt. Interpersoneller Kontakt wird bewusst dosiert.'
+    A: {
+      high: { title: 'Dynamisme prononcé (65–75+)', text: 'Forte orientation vers les objectifs et les résultats. Grande responsabilité et capacité de décision. Communication directe et orientée vers les faits. Curieux/se et motivé(e) par les défis. L\'objectif prime sur le processus. Besoin de liberté d\'action. Tendance à exiger beaucoup des autres — et de soi-même.' },
+      low:  { title: 'Faible dynamisme (35–25 et moins)', text: 'Style orienté vers le consensus. Rôle consultatif et de médiation. Capacité à créer une atmosphère positive dans les groupes. Parfois trop accommodant(e). Capacité d\'affirmation réduite. Tendance à laisser les conflits couver trop longtemps avant d\'intervenir.' }
+    },
+    B: {
+      high: { title: 'Enthousiasme prononcé (65–75+)', text: 'Orientation vers l\'extérieur et forte volonté de contact. Attitude positive, présence optimiste. Grande capacité de persuasion et d\'enthousiasme. Tendance à prendre beaucoup en charge — risque de surmenage. La complexité des problèmes est parfois sous-estimée. Tendance à éviter les confrontations.' },
+      low:  { title: 'Faible enthousiasme (35–25 et moins)', text: 'Orientation objective et analytique. Maîtrise émotionnelle et focus sur la résolution de problèmes. Réservé(e), introverti(e), peut paraître froid(e). Les tâches sont accomplies avec grande objectivité. Le contact interpersonnel est consciemment dosé.' }
     }
   }
 };
+
+function getInterpretations() { return INTERPRETATIONS_ALL[LANG] || INTERPRETATIONS_ALL.de; }
 
 // ── RENDER QUESTIONS ────────────────────────────────────────────────────────
 
@@ -1594,9 +1608,8 @@ function renderCoachResults(decoded) {
   document.querySelector('.raw-toggle').textContent = l.rawToggle;
   document.querySelector('.btn-reset').textContent = l.resetBtn;
   const btns = document.querySelectorAll('.coach-btn');
-  if (btns[0]) btns[0].textContent = l.btnWords;
-  if (btns[1]) btns[1].textContent = l.btnProfile;
-  if (btns[2]) btns[2].textContent = l.btnInterp;
+  if (btns[0]) btns[0].textContent = l.btnProfile;
+  if (btns[1]) btns[1].textContent = l.btnInterp;
 
   renderBars('barsM', scores.profM);
   renderBars('barsW', scores.profW);
@@ -1646,7 +1659,7 @@ function renderInterpretations(profile) {
     const val = profile[dim];
     const isHigh = val >= 60;
     const isLow = val <= 40;
-    const interp = INTERPRETATIONS[dim];
+    const interp = getInterpretations()[dim];
     const card = document.createElement('div');
     card.className = 'interp-card';
     card.innerHTML = `
@@ -1689,34 +1702,6 @@ function resetTest() {
 }
 
 // ── WORD LIST ────────────────────────────────────────────────────────────────
-
-let _lastAnswers = null; // store answers for word list
-
-function toggleWordList() {
-  const el = document.getElementById('wordList');
-  if (el.style.display === 'block') { el.style.display = 'none'; return; }
-  if (!_lastAnswers) { el.innerHTML = '<p style="color:var(--muted)">Keine Wortdaten verfügbar.</p>'; el.style.display = 'block'; return; }
-
-  const mWords = _lastAnswers.mWords || [];
-  const wWords = _lastAnswers.wWords || [];
-
-  const l = t();
-  const wl = I18N[_lastAnswers.lang || LANG];
-  el.innerHTML = `
-    <h4>${l.wordListTitle}</h4>
-    <div class="word-list-cols">
-      <div>
-        <div class="word-col-title">${wl.wordMost(mWords.length)}</div>
-        ${mWords.map(w => `<span class="word-pill">${w}</span>`).join('')}
-      </div>
-      <div>
-        <div class="word-col-title">${wl.wordLeast(wWords.length)}</div>
-        ${wWords.map(w => `<span class="word-pill">${w}</span>`).join('')}
-      </div>
-    </div>
-  `;
-  el.style.display = 'block';
-}
 
 // ── PNG EXPORT ───────────────────────────────────────────────────────────────
 
@@ -1786,17 +1771,13 @@ function renderCoachResultsInLang(decoded) {
   document.querySelector('.raw-toggle').textContent = l.rawToggle;
   document.querySelector('.btn-reset').textContent = l.resetBtn;
   const btns = document.querySelectorAll('.coach-btn');
-  if (btns[0]) btns[0].textContent = l.btnWords;
-  if (btns[1]) btns[1].textContent = l.btnProfile;
-  if (btns[2]) btns[2].textContent = l.btnInterp;
+  if (btns[0]) btns[0].textContent = l.btnProfile;
+  if (btns[1]) btns[1].textContent = l.btnInterp;
 
   renderBars('barsM', scores.profM);
   renderBars('barsW', scores.profW);
   renderBars('barsD', scores.profD);
   renderInterpretations(scores.profD);
-
-  // Close word list if open so it re-renders in new lang on next click
-  document.getElementById('wordList').style.display = 'none';
 
   setTimeout(() => {
     document.querySelectorAll('.stab-bar-fill').forEach(el => {
