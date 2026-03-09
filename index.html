@@ -638,6 +638,8 @@
     .word-label { font-size: 0.85rem; }
   }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init('X5DcsZZxy0M4C--XH');</script>
 </head>
 <body>
 
@@ -698,18 +700,7 @@
       <p>Ihre Antworten wurden erfasst. Ihr Coach wird die Auswertung im nächsten Meeting mit Ihnen besprechen.</p>
       <p class="conf-sub">Sie können dieses Fenster schliessen.</p>
     </div>
-
-    <!-- Coach-only section — in production you'd hide this or send via email -->
-    <div class="coach-section">
-      <div class="coach-section-label">🔒 Nur für Coach sichtbar</div>
-      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.8rem">
-        Kopieren Sie diesen Link und öffnen Sie ihn auf Ihrem eigenen Gerät, um die vollständige Auswertung zu sehen.
-      </p>
-      <div class="url-row">
-        <input type="text" id="coachUrlBox" readonly>
-        <button id="copyBtn" onclick="copyCoachUrl()">Link kopieren</button>
-      </div>
-    </div>
+    <div id="conf-sending" style="text-align:center;color:var(--muted);font-size:0.85rem;padding:1rem">Auswertung wird übermittelt…</div>
   </div>
 
   <!-- RESULTS -->
@@ -1146,21 +1137,20 @@ function showCoacheeConfirmation(name, coachUrl) {
 
   const conf = document.getElementById('confirmation');
   conf.style.display = 'block';
-
   document.getElementById('conf-name').textContent = name ? `Danke, ${name}!` : 'Vielen Dank!';
-
-  // Copy-to-clipboard for coach
-  document.getElementById('coachUrlBox').value = coachUrl;
   window.scrollTo({top: 0, behavior: 'smooth'});
-}
 
-function copyCoachUrl() {
-  const box = document.getElementById('coachUrlBox');
-  box.select();
-  document.execCommand('copy');
-  const btn = document.getElementById('copyBtn');
-  btn.textContent = '✓ Kopiert';
-  setTimeout(() => btn.textContent = 'Link kopieren', 2000);
+  // Send coach URL via EmailJS
+  const date = document.getElementById('dateInput').value || new Date().toLocaleDateString('de-CH');
+  emailjs.send('service_yw6gsbd', 'template_wxvyf7r', {
+    coachee_name: name || '(kein Name angegeben)',
+    date: date,
+    coach_url: coachUrl
+  }).then(() => {
+    document.getElementById('conf-sending').textContent = '✓ Auswertung wurde an den Coach übermittelt.';
+  }).catch(() => {
+    document.getElementById('conf-sending').textContent = 'Hinweis: Übermittlung fehlgeschlagen. Bitte Coach informieren.';
+  });
 }
 
 // ── COACH RESULTS ─────────────────────────────────────────────────────────────
