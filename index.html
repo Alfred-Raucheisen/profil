@@ -902,7 +902,7 @@ const I18N = {
     wordMost: n => `M — Passt am meisten (${n})`,
     wordLeast: n => `W — Passt am wenigsten (${n})`,
     noWordData: 'Keine Wortdaten verfügbar.',
-    stabNames: { S: 'Sorgfalt', T: 'Geduld', A: 'Tatkraft', B: 'Begeisterung' },
+    stabNames: { S: 'Sorgfalt', T: 'Stabilität', A: 'Tatkraft', B: 'Enthusiasmus' },
     genderLabel: g => g === 'w' ? 'Weiblich' : 'Männlich',
     metaSuffix: 'Persönlichkeits-Cockpit',
     points: 'Punkte',
@@ -1256,9 +1256,9 @@ const LOOKUP_W = {
 const STAB_IDX = {S:0, T:1, A:2, B:3};
 const STAB_NAMES = {
   S: 'Sorgfalt',
-  T: 'Geduld',
+  T: 'Stabilität',
   A: 'Tatkraft',
-  B: 'Begeisterung'
+  B: 'Enthusiasmus'
 };
 const STAB_COLORS = {S:'var(--s-color)', T:'var(--t-color)', A:'var(--a-color)', B:'var(--b-color)'};
 const STAB_LIGHTS = {S:'var(--s-light)', T:'var(--t-light)', A:'var(--a-light)', B:'var(--b-light)'};
@@ -1270,16 +1270,16 @@ const INTERPRETATIONS_ALL = {
       low:  { title: 'Geringe Sorgfalt (35–25 und weniger)', text: 'Offenheit und Spontaneität. Unabhängiges Handeln, Skepsis gegenüber Regeln und formalisierten Prozessen. Auch unter Druck leistungsstark. Neigung, Details zu vernachlässigen. Direkt, impulsiv in Entscheidungen, risikofreudig und geradlinig.' }
     },
     T: {
-      high: { title: 'Ausgeprägte Geduld (65–75+)', text: 'Beständigkeit, Loyalität und Verlässlichkeit prägen das Verhalten. Ruhig, stabil, hervorragende Zuhörerin/hervorragender Zuhörer. Wertkonservative Haltung, ausgeprägtes Zugehörigkeitsgefühl. Veränderungen werden eher als Herausforderung erlebt. Setzt und respektiert klare Grenzen und Prinzipien. Zu viele Verpflichtungen können zur Überlastung führen.' },
-      low:  { title: 'Geringe Geduld (35–25 und weniger)', text: 'Schnelles Reagieren auf Veränderungen, aktives Interesse an neuen Aufgaben. Hohes persönliches Engagement, jedoch mitunter mangelnde Systematik. Ungeduld und Schwierigkeit, sich zu entspannen. Geringe Aufmerksamkeit beim Zuhören in längeren Prozessen.' }
+      high: { title: 'Ausgeprägte Stabilität (65–75+)', text: 'Beständigkeit, Loyalität und Verlässlichkeit prägen das Verhalten. Ruhig, stabil, hervorragende Zuhörerin/hervorragender Zuhörer. Wertkonservative Haltung, ausgeprägtes Zugehörigkeitsgefühl. Veränderungen werden eher als Herausforderung erlebt. Setzt und respektiert klare Grenzen und Prinzipien. Zu viele Verpflichtungen können zur Überlastung führen.' },
+      low:  { title: 'Geringe Stabilität (35–25 und weniger)', text: 'Schnelles Reagieren auf Veränderungen, aktives Interesse an neuen Aufgaben. Hohes persönliches Engagement, jedoch mitunter mangelnde Systematik. Ungeduld und Schwierigkeit, sich zu entspannen. Geringe Aufmerksamkeit beim Zuhören in längeren Prozessen.' }
     },
     A: {
       high: { title: 'Ausgeprägte Tatkraft (65–75+)', text: 'Starke Ziel- und Ergebnisorientierung. Hohe Verantwortungsbereitschaft und Entscheidungsstärke. Sachbezogene, direkte Kommunikation. Neugierig und herausforderungsbereit. Ziel ist wichtiger als Prozess. Benötigen Gestaltungsfreiheit. Tendenz, andere stark zu fordern — auch sich selbst.' },
       low:  { title: 'Geringe Tatkraft (35–25 und weniger)', text: 'Konsensorientierter Stil. Beratende und vermittelnde Funktion. Fähigkeit, positive Atmosphäre in Gruppen herzustellen. Mitunter zu nachgiebig. Vermindertes Durchsetzungsvermögen. Tendenz, Konflikte zu lange schwelen zu lassen, bevor eingegriffen wird.' }
     },
     B: {
-      high: { title: 'Ausgeprägte Begeisterung (65–75+)', text: 'Aussenorientierung und ausgeprägte Kontaktbereitschaft. Positive Grundhaltung, optimistisches Auftreten. Starkes Überzeugungsvermögen und Begeisterungsfähigkeit. Traut sich viel zu — Gefahr der Überforderung. Komplexität von Problemen wird gelegentlich unterschätzt. Konfrontationen eher vermeidend.' },
-      low:  { title: 'Geringe Begeisterung (35–25 und weniger)', text: 'Sachbezogene, analytische Orientierung. Emotionale Kontrolle und Fokus auf Problemlösung. Zurückhaltend, reserviert, kühl wirkend. Aufgaben werden mit grosser Sachlichkeit bewältigt. Interpersoneller Kontakt wird bewusst dosiert.' }
+      high: { title: 'Ausgeprägter Enthusiasmus (65–75+)', text: 'Aussenorientierung und ausgeprägte Kontaktbereitschaft. Positive Grundhaltung, optimistisches Auftreten. Starkes Überzeugungsvermögen und Begeisterungsfähigkeit. Traut sich viel zu — Gefahr der Überforderung. Komplexität von Problemen wird gelegentlich unterschätzt. Konfrontationen eher vermeidend.' },
+      low:  { title: 'Geringer Enthusiasmus (35–25 und weniger)', text: 'Sachbezogene, analytische Orientierung. Emotionale Kontrolle und Fokus auf Problemlösung. Zurückhaltend, reserviert, kühl wirkend. Aufgaben werden mit grosser Sachlichkeit bewältigt. Interpersoneller Kontakt wird bewusst dosiert.' }
     }
   },
   en: {
