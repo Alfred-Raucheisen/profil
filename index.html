@@ -1499,6 +1499,15 @@ function checkCoachUrl() {
 // ── SUBMIT ───────────────────────────────────────────────────────────────────
 
 function submitTest() {
+  const nameVal = document.getElementById('nameInput').value.trim();
+  if (!nameVal) {
+    const el = document.getElementById('nameInput');
+    el.style.borderColor = '#C0392B';
+    el.placeholder = 'Bitte Name eintragen';
+    el.focus();
+    el.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
   let allDone = true;
   for (let gi = 0; gi < 24; gi++) {
     const mVal = document.querySelector(`input[name="M-${gi}"]:checked`)?.value;
