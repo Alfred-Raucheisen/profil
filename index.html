@@ -878,15 +878,15 @@ const I18N = {
     sent: '✓ Auswertung wurde an den Coach übermittelt.',
     sendError: '⚠️ Übermittlung fehlgeschlagen — bitte Coach direkt informieren.',
     resetBtn: '← Neu ausfüllen',
-    dominant: 'Dominante Dimension',
-    highestNorm: 'Höchster normierter Wert im projizierten Bild',
+    dominant: 'Dominante Dimension (Inneres Selbst)',
+    highestNorm: 'Höchster normierter Wert im Inneren Selbst',
     profileMTitle: 'Projiziertes Bild', profileMHint: '(M-Werte)',
-    profileMDesc: 'Wie Sie sich nach aussen zeigen möchten — Ihr bewusstes, sozial geprägtes Selbstbild.',
+    profileMDesc: 'Wie Sie sich nach aussen zeigen — bewusstes, angepasstes Verhalten. Abweichungen vom Inneren Selbst kosten Energie.',
     profileWTitle: 'Inneres Selbst', profileWHint: '(W-Werte)',
-    profileWDesc: 'Wie Sie sich innerlich erleben — Ihr authentischeres, tieferes Persönlichkeitsprofil.',
+    profileWDesc: 'Ihr Wesenskern — wie Sie sich verhalten würden, wenn kein Anpassungsdruck bestünde. Basis der Interpretation.',
     profileDTitle: 'Im Lichte der Umwelt', profileDHint: '(M−W)',
-    profileDDesc: 'Die Differenz zwischen Aussen- und Innenbild — zeigt Rollenanpassung und potenzielle innere Spannung.',
-    profileDStrong: 'Basis der Coaching-Interpretation.',
+    profileDDesc: 'Wie Sie vermuten, dass andere Ihr Verhalten wahrnehmen — geprägt durch Selbst- und Aussenbild.',
+    profileDStrong: 'Vermutetes Fremdbild.',
     interpTitle: 'Interpretation Ihrer Werte',
     interpHigh: 'Hoher Wert – ausgeprägt',
     interpLow: 'Tiefer Wert – schwach ausgeprägt',
@@ -894,6 +894,10 @@ const I18N = {
     interpMidText: 'Keine ausgeprägte Tendenz – Merkmale beider Pole können situativ auftreten.',
     interpBothPoles: 'Beide Pole zur Referenz',
     interpHighLabel: 'Hohe Werte:', interpLowLabel: 'Tiefe Werte:',
+    interpISBasis: 'Basis: Inneres Selbst (Wesenskern)',
+    interpPBLabel: 'Projiziertes Bild',
+    interpPBHigher: 'zeigt nach aussen stärker als das Wesen — erfordert aktiven Energieeinsatz',
+    interpPBLower: 'dämpft das Wesen nach aussen — welche Energie wird zurückgehalten?',
     rawToggle: 'Rohdaten anzeigen',
     btnWords: '📋 Gewählte Wörter anzeigen',
     btnProfile: '📊 Profil exportieren',
@@ -928,15 +932,15 @@ const I18N = {
     sent: '✓ Results sent to coach.',
     sendError: '⚠️ Sending failed — please inform your coach directly.',
     resetBtn: '← Start over',
-    dominant: 'Dominant Dimension',
-    highestNorm: 'Highest normalised score in projected image',
+    dominant: 'Dominant Dimension (Inner Self)',
+    highestNorm: 'Highest normalised score in inner self',
     profileMTitle: 'Projected Image', profileMHint: '(M-values)',
-    profileMDesc: 'How you wish to present yourself — your conscious, socially shaped self-image.',
+    profileMDesc: 'How you present yourself outwardly — conscious, adapted behaviour. Deviations from the Inner Self cost energy.',
     profileWTitle: 'Inner Self', profileWHint: '(W-values)',
-    profileWDesc: 'How you experience yourself inwardly — your more authentic, deeper personality profile.',
+    profileWDesc: 'Your core nature — how you would behave without external pressure to adapt. Basis of interpretation.',
     profileDTitle: 'In the Light of the Environment', profileDHint: '(M−W)',
-    profileDDesc: 'The difference between outer and inner image — shows role adaptation and potential inner tension.',
-    profileDStrong: 'Basis for coaching interpretation.',
+    profileDDesc: 'How you assume others perceive your behaviour — shaped by both self-image and outer image.',
+    profileDStrong: 'Assumed external image.',
     interpTitle: 'Interpretation of Your Scores',
     interpHigh: 'High score – pronounced',
     interpLow: 'Low score – weakly pronounced',
@@ -944,6 +948,10 @@ const I18N = {
     interpMidText: 'No pronounced tendency – traits of both poles may appear situationally.',
     interpBothPoles: 'Both poles for reference',
     interpHighLabel: 'High scores:', interpLowLabel: 'Low scores:',
+    interpISBasis: 'Basis: Inner Self (core nature)',
+    interpPBLabel: 'Projected Image',
+    interpPBHigher: 'projects outwardly stronger than the core — requires active energy',
+    interpPBLower: 'dampens the core outwardly — what energy is being held back?',
     rawToggle: 'Show raw data',
     btnWords: '📋 Show selected words',
     btnProfile: '📊 Export profile',
@@ -978,15 +986,15 @@ const I18N = {
     sent: '✓ Résultats envoyés au coach.',
     sendError: '⚠️ Échec de l\'envoi — veuillez informer votre coach directement.',
     resetBtn: '← Recommencer',
-    dominant: 'Dimension dominante',
-    highestNorm: 'Valeur normalisée la plus élevée dans l\'image projetée',
+    dominant: 'Dimension dominante (Moi intérieur)',
+    highestNorm: 'Valeur normalisée la plus élevée dans le moi intérieur',
     profileMTitle: 'Image projetée', profileMHint: '(valeurs M)',
-    profileMDesc: 'Comment vous souhaitez vous présenter — votre image de soi consciente et socialement façonnée.',
+    profileMDesc: 'Comment vous vous présentez — comportement conscient et adapté. Les écarts par rapport au Moi intérieur coûtent de l\'énergie.',
     profileWTitle: 'Moi intérieur', profileWHint: '(valeurs W)',
-    profileWDesc: 'Comment vous vous vivez intérieurement — votre profil de personnalité plus authentique.',
+    profileWDesc: 'Votre nature profonde — comment vous vous comporteriez sans pression d\'adaptation. Base de l\'interprétation.',
     profileDTitle: 'À la lumière de l\'environnement', profileDHint: '(M−W)',
-    profileDDesc: 'La différence entre image extérieure et intérieure — montre l\'adaptation au rôle et les tensions potentielles.',
-    profileDStrong: 'Base de l\'interprétation coaching.',
+    profileDDesc: 'Comment vous supposez que les autres perçoivent votre comportement — façonné par votre image intérieure et extérieure.',
+    profileDStrong: 'Image extérieure supposée.',
     interpTitle: 'Interprétation de vos valeurs',
     interpHigh: 'Valeur élevée – prononcée',
     interpLow: 'Valeur faible – peu prononcée',
@@ -994,6 +1002,10 @@ const I18N = {
     interpMidText: 'Pas de tendance prononcée – les traits des deux pôles peuvent apparaître selon la situation.',
     interpBothPoles: 'Les deux pôles pour référence',
     interpHighLabel: 'Valeurs élevées:', interpLowLabel: 'Valeurs faibles:',
+    interpISBasis: 'Base: Moi intérieur (nature profonde)',
+    interpPBLabel: 'Image projetée',
+    interpPBHigher: 'se projette plus fortement que la nature profonde — nécessite une énergie active',
+    interpPBLower: 'atténue la nature profonde vers l\'extérieur — quelle énergie est retenue?',
     rawToggle: 'Afficher les données brutes',
     btnWords: '📋 Afficher les mots choisis',
     btnProfile: '📊 Exporter le profil',
@@ -1597,12 +1609,12 @@ function renderCoachResults(decoded) {
   document.getElementById('resultMeta').textContent = `${genderLabel} · ${date} · ${l.metaSuffix}`;
 
   const STAB_NAMES = l.stabNames;
-  const dominant = Object.entries(scores.profM).sort((a,b) => b[1]-a[1])[0][0];
+  const dominant = Object.entries(scores.profW).sort((a,b) => b[1]-a[1])[0][0];
   document.getElementById('dominantBanner').innerHTML = `
     <div class="dominant-letter" style="font-size:1rem;padding:1rem 1.2rem">${STAB_NAMES[dominant]}</div>
     <div class="dominant-text">
       <h3>${l.dominant}: ${STAB_NAMES[dominant]}</h3>
-      <p>${l.highestNorm}: ${scores.profM[dominant]} ${l.points}</p>
+      <p>${l.highestNorm}: ${scores.profW[dominant]} ${l.points}</p>
     </div>
   `;
 
@@ -1623,7 +1635,7 @@ function renderCoachResults(decoded) {
   renderBars('barsM', scores.profM);
   renderBars('barsW', scores.profW);
   renderBars('barsD', scores.profD);
-  renderInterpretations(scores.profD);
+  renderInterpretations(scores.profW, scores.profM);
 
   document.getElementById('rawData').innerHTML = `
     M: S=${scores.mCount.S} T=${scores.mCount.T} A=${scores.mCount.A} B=${scores.mCount.B}<br>
@@ -1658,17 +1670,43 @@ function renderBars(containerId, profile) {
   });
 }
 
-function renderInterpretations(profile) {
+function renderInterpretations(profileIS, profilePB) {
   const c = document.getElementById('interpCards');
   const l = t();
   const STAB_NAMES = l.stabNames;
   c.innerHTML = '';
-  const sorted = ['S','T','A','B'].sort((a,b) => profile[b]-profile[a]);
+
+  // Sort by IS value descending (Wesenskern first)
+  const sorted = ['S','T','A','B'].sort((a,b) => profileIS[b]-profileIS[a]);
+
+  // Add basis note at top
+  const basisNote = document.createElement('p');
+  basisNote.style.cssText = 'font-size:12px;color:#888;margin:0 0 12px 0;';
+  basisNote.textContent = l.interpISBasis || 'Basis: Inneres Selbst (Wesenskern)';
+  c.appendChild(basisNote);
+
   sorted.forEach(dim => {
-    const val = profile[dim];
-    const isHigh = val >= 60;
-    const isLow = val <= 40;
+    const isVal = profileIS[dim];
+    const pbVal = profilePB ? profilePB[dim] : null;
+    const gap = pbVal !== null ? pbVal - isVal : 0;
+    const isHigh = isVal >= 60;
+    const isLow  = isVal <= 40;
     const interp = getInterpretations()[dim];
+
+    // PB adaptation note if gap ≥ 15
+    let pbNoteHTML = '';
+    if (pbVal !== null && Math.abs(gap) >= 15) {
+      const pbHigh = pbVal >= 60, pbLow = pbVal <= 40;
+      const sign = gap > 0 ? `+${gap}` : `${gap}`;
+      let pbDesc = '';
+      if (gap > 0) {
+        pbDesc = `${l.interpPBLabel || 'Projiziertes Bild'} (${pbVal}): ${l.interpPBHigher || 'zeigt nach aussen stärker als das Wesen'} (${sign}).`;
+      } else {
+        pbDesc = `${l.interpPBLabel || 'Projiziertes Bild'} (${pbVal}): ${l.interpPBLower || 'dämpft das Wesen nach aussen'} (${sign}).`;
+      }
+      pbNoteHTML = `<div style="font-size:12px;background:#fffbf0;border-left:3px solid #c8a84b;border-radius:0 6px 6px 0;padding:8px 10px;margin-top:10px;line-height:1.6;color:#1a2744">${pbDesc}</div>`;
+    }
+
     const card = document.createElement('div');
     card.className = 'interp-card';
     card.innerHTML = `
@@ -1678,12 +1716,13 @@ function renderInterpretations(profile) {
           <h4>${STAB_NAMES[dim]}</h4>
           <span>${isHigh ? l.interpHigh : isLow ? l.interpLow : l.interpMid}</span>
         </div>
-        <div class="interp-score-badge" style="background:${STAB_COLORS[dim]}">${val}</div>
+        <div class="interp-score-badge" style="background:${STAB_COLORS[dim]}">${isVal}</div>
       </div>
       <div class="interp-body ${isHigh || isLow ? 'open' : ''}">
         ${isHigh ? `<div class="interp-block"><h5 style="color:${STAB_COLORS[dim]}">${interp.high.title}</h5><p>${interp.high.text}</p></div>` : ''}
-        ${isLow ? `<div class="interp-block"><h5 style="color:${STAB_COLORS[dim]}">${interp.low.title}</h5><p>${interp.low.text}</p></div>` : ''}
+        ${isLow  ? `<div class="interp-block"><h5 style="color:${STAB_COLORS[dim]}">${interp.low.title}</h5><p>${interp.low.text}</p></div>` : ''}
         ${!isHigh && !isLow ? `<div class="interp-block"><h5 style="color:${STAB_COLORS[dim]}">${l.interpMid} (41–59)</h5><p>${l.interpMidText}</p></div>` : ''}
+        ${pbNoteHTML}
         <div class="interp-block">
           <h5 style="color:${STAB_COLORS[dim]}">${l.interpBothPoles}</h5>
           <p><strong>${l.interpHighLabel}</strong> ${interp.high.text}</p>
@@ -1762,12 +1801,12 @@ function renderCoachResultsInLang(decoded) {
   document.getElementById('resultMeta').textContent = `${genderLabel} · ${date} · ${l.metaSuffix}`;
 
   const STAB_NAMES = l.stabNames;
-  const dominant = Object.entries(scores.profM).sort((a,b) => b[1]-a[1])[0][0];
+  const dominant = Object.entries(scores.profW).sort((a,b) => b[1]-a[1])[0][0];
   document.getElementById('dominantBanner').innerHTML = `
     <div class="dominant-letter" style="font-size:1rem;padding:1rem 1.2rem">${STAB_NAMES[dominant]}</div>
     <div class="dominant-text">
       <h3>${l.dominant}: ${STAB_NAMES[dominant]}</h3>
-      <p>${l.highestNorm}: ${scores.profM[dominant]} ${l.points}</p>
+      <p>${l.highestNorm}: ${scores.profW[dominant]} ${l.points}</p>
     </div>
   `;
   document.querySelector('#profileM h3').innerHTML = `${l.profileMTitle} <span class="profile-hint">${l.profileMHint}</span>`;
@@ -1786,7 +1825,7 @@ function renderCoachResultsInLang(decoded) {
   renderBars('barsM', scores.profM);
   renderBars('barsW', scores.profW);
   renderBars('barsD', scores.profD);
-  renderInterpretations(scores.profD);
+  renderInterpretations(scores.profW, scores.profM);
 
   setTimeout(() => {
     document.querySelectorAll('.stab-bar-fill').forEach(el => {
